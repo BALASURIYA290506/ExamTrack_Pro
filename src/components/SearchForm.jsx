@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 function SearchForm({ onSearch }) {
-  const [name, setName] = useState('')
+  /* const [name, setName] = useState('') */
   const [registerNumber, setRegisterNumber] = useState('')
 
   const handleSubmit = (e) => {
@@ -12,7 +12,7 @@ function SearchForm({ onSearch }) {
       return
     }
 
-    onSearch(name, registerNumber)
+    onSearch(registerNumber)
   }
 
   return (
@@ -27,22 +27,7 @@ function SearchForm({ onSearch }) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                Student Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg 
-                         text-white placeholder-gray-400 focus:outline-none focus:ring-2 
-                         focus:ring-primary focus:border-transparent transition-all"
-                placeholder="Enter your name"
-                required
-              />
-            </div>
+            
 
             <div>
               <label htmlFor="registerNumber" className="block text-sm font-medium text-gray-300 mb-2">
