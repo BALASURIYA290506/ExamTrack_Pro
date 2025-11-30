@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SearchForm from './components/SearchForm'
 import Timetable from './components/Timetable'
 import studentsData from './data/students.json'
@@ -6,12 +6,27 @@ import studentsData from './data/students.json'
 function App() {
   const [studentSchedule, setStudentSchedule] = useState(null)
   const [studentInfo, setStudentInfo] = useState(null)
+  const [darkMode, setDarkMode] = useState(() => {
+    // Check localStorage for saved preference, default to light mode (false)
+    const savedMode = localStorage.getItem('darkMode')
+    return savedMode === 'true' ? true : false
+  })
+
+  // Update document class and localStorage when dark mode changes
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    localStorage.setItem('darkMode', darkMode)
+  }, [darkMode])
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode)
+  }
 
   const handleSearch = (registerNumber) => {
-    // Normalize name: trim, lowercase, remove extra spaces
-    const normalizeName = (str) => str.trim().toLowerCase().replace(/\s+/g, ' ')
-    
-    const normalizedSearchName = normalizeName(name)
     
     // Convert date from DD.MM.YYYY to YYYY-MM-DD
     const convertDate = (dateStr) => {
@@ -33,19 +48,13 @@ function App() {
       return upper
     }
     
-    // Filter students matching both name and register number
+    // Filter students matching register number
     const filtered = studentsData.filter(student => {
-      /*const studentName = student['Student Name'] || student.studentName || '' */
       const regNumber = student['Register Number'] || student.registerNumber || ''
-      
-      /* const normalizedStudentName = normalizeName(studentName) */
       const searchRegNumber = registerNumber.trim().toString()
       const studentRegNumber = regNumber.toString().trim()
       
-      return (
-        /* normalizedStudentName === normalizedSearchName && */
-        studentRegNumber === searchRegNumber
-      )
+      return studentRegNumber === searchRegNumber
     })
 
     if (filtered.length === 0) {
@@ -65,6 +74,7 @@ function App() {
         originalDate: dateStr,
         session: normalizeSession(slot),
         category: student['Category'] || student.category || '',
+        subjectCode: student['Subject Code'] || student.subjectCode || '',
         subjectName: student['Subject Name'] || student.subjectName || '',
         roomHall: student['Location'] || student.roomHall || student['Room / Hall'] || ''
       }
@@ -98,15 +108,17 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
       <div className="container mx-auto px-4 py-8">
         {!studentSchedule ? (
-          <SearchForm onSearch={handleSearch} />
+          <SearchForm onSearch={handleSearch} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         ) : (
           <Timetable 
             schedule={studentSchedule} 
             studentInfo={studentInfo}
             onBack={handleBack}
+            darkMode={darkMode}
+            toggleDarkMode={toggleDarkMode}
           />
         )}
       </div>
