@@ -79,6 +79,60 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
             </button>
           </form>
         </div>
+
+        {/* Developer Credits */}
+        <div className="mt-6 bg-white dark:bg-black rounded-xl shadow-md border border-gray-200 dark:border-zinc-700 p-4 transition-colors duration-300">
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-3 font-medium">Developed by</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            {/* Developer 1 */}
+            <a
+              href="https://www.linkedin.com/in/m-balasuriya/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-zinc-800 
+                       rounded-lg transition-all duration-200 border border-gray-200 dark:border-zinc-700 w-full sm:w-auto justify-center"
+            >
+              <div className="flex items-center gap-2 flex-1">
+                <img 
+                  src="/developer1.jpg" 
+                  alt="BalaSuriya M" 
+                  className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-zinc-700"
+                />
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-black dark:text-white">BalaSuriya M</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Full Stack Developer</p>
+                </div>
+              </div>
+              <svg className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+
+            {/* Developer 2 */}
+            <a
+              href="https://www.linkedin.com/in/bala-saravanan-k-421a13325/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-zinc-800 
+                       rounded-lg transition-all duration-200 border border-gray-200 dark:border-zinc-700 w-full sm:w-auto justify-center"
+            >
+              <div className="flex items-center gap-2 flex-1">
+                <img 
+                  src="/developer2.jpg" 
+                  alt="Bala Saravanan K" 
+                  className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-zinc-700"
+                />
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-black dark:text-white">Bala Saravanan K</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Web Designer</p>
+                </div>
+              </div>
+              <svg className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   )
