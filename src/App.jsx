@@ -7,7 +7,7 @@ function App() {
   const [studentSchedule, setStudentSchedule] = useState(null)
   const [studentInfo, setStudentInfo] = useState(null)
 
-  const handleSearch = (name, registerNumber) => {
+  const handleSearch = (registerNumber) => {
     // Normalize name: trim, lowercase, remove extra spaces
     const normalizeName = (str) => str.trim().toLowerCase().replace(/\s+/g, ' ')
     
@@ -35,21 +35,21 @@ function App() {
     
     // Filter students matching both name and register number
     const filtered = studentsData.filter(student => {
-      const studentName = student['Student Name'] || student.studentName || ''
+      /*const studentName = student['Student Name'] || student.studentName || '' */
       const regNumber = student['Register Number'] || student.registerNumber || ''
       
-      const normalizedStudentName = normalizeName(studentName)
+      /* const normalizedStudentName = normalizeName(studentName) */
       const searchRegNumber = registerNumber.trim().toString()
       const studentRegNumber = regNumber.toString().trim()
       
       return (
-        normalizedStudentName === normalizedSearchName &&
+        /* normalizedStudentName === normalizedSearchName && */
         studentRegNumber === searchRegNumber
       )
     })
 
     if (filtered.length === 0) {
-      alert('Student not found! Please check your name and register number.')
+      alert('Student not found! Please check your register number.')
       return
     }
 

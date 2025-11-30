@@ -1,14 +1,14 @@
 import { useState } from 'react'
 
 function SearchForm({ onSearch }) {
-  /* const [name, setName] = useState('') */
+  
   const [registerNumber, setRegisterNumber] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
     
-    if (!name.trim() || !registerNumber.trim()) {
-      alert('Please enter both name and register number.')
+    if (!registerNumber.trim()) {
+      alert('Please enter the register number.')
       return
     }
 
