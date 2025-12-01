@@ -1,7 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
   const [registerNumber, setRegisterNumber] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
+
+  // Load saved register number on component mount
+  useEffect(() => {
+    const savedRegisterNumber = localStorage.getItem('rememberedRegisterNumber')
+    const savedRememberMe = localStorage.getItem('rememberMe') === 'true'
+    
+    if (savedRememberMe && savedRegisterNumber) {
+      setRegisterNumber(savedRegisterNumber)
+      setRememberMe(true)
+    }
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -9,6 +21,15 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
     if (!registerNumber.trim()) {
       alert('Please enter your register number.')
       return
+    }
+
+    // Save or remove register number based on remember me checkbox
+    if (rememberMe) {
+      localStorage.setItem('rememberedRegisterNumber', registerNumber)
+      localStorage.setItem('rememberMe', 'true')
+    } else {
+      localStorage.removeItem('rememberedRegisterNumber')
+      localStorage.removeItem('rememberMe')
     }
 
     onSearch(registerNumber)
@@ -68,6 +89,21 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
               />
             </div>
 
+            {/* Remember Me Checkbox */}
+            <div className="flex items-center">
+              <input
+                id="rememberMe"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 text-black dark:text-white bg-white dark:bg-zinc-900 border-2 border-gray-300 dark:border-zinc-700 
+                         rounded focus:ring-2 focus:ring-black dark:focus:ring-white cursor-pointer"
+              />
+              <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+                Remember my register number
+              </label>
+            </div>
+
             <button
               type="submit"
               className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 
@@ -95,11 +131,11 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
               <div className="flex items-center gap-2 flex-1">
                 <img 
                   src="/developer1.png" 
-                  alt="BalaSuriya M" 
+                  alt="Balasuriya M" 
                   className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-zinc-700"
                 />
                 <div className="text-left">
-                  <p className="text-sm font-semibold text-black dark:text-white">BalaSuriya M</p>
+                  <p className="text-sm font-semibold text-black dark:text-white">Balasuriya M</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Full Stack Developer</p>
                 </div>
               </div>
