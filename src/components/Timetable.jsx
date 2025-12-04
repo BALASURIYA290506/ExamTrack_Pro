@@ -78,14 +78,84 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
     return 'upcoming'
   }
 
-  const getTimeRemaining = (dateString) => {
+  const getSessionTime = (session) => {
+    if (session === 'FN') {
+      return '9:00 AM - 12:00 PM'
+    }
+    if (session === 'AN') {
+      return '1:00 PM - 4:00 PM'
+    }
+    return null
+  }
+
+  const getTimeRemaining = (dateString, session, category) => {
     if (!dateString) return null
+    
+    // Only calculate detailed time for Practical exams
+    if (category !== 'Practical') {
+      const examDate = new Date(dateString)
+      const now = new Date()
+      const diffMs = examDate - now
+      
+      if (diffMs < 0) return null
+      
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+      const diffDays = Math.floor(diffHours / 24)
+      const remainingHours = diffHours % 24
+      
+      if (diffDays > 0) {
+        return `${diffDays}d ${remainingHours}h left`
+      } else if (diffHours > 0) {
+        return `${diffHours}h left`
+      } else {
+        const diffMinutes = Math.floor(diffMs / (1000 * 60))
+        return `${diffMinutes}m left`
+      }
+    }
+    
+    // For Practical exams, calculate time to session start
     const examDate = new Date(dateString)
     const now = new Date()
-    const diffMs = examDate - now
     
-    if (diffMs < 0) return null // Exam has passed
+    // Set the session start time
+    let sessionStartHour = 9
+    let sessionStartMinute = 0
+    let sessionEndHour = 12
+    let sessionEndMinute = 0
     
+    if (session === 'AN') {
+      sessionStartHour = 13 // 1:00 PM
+      sessionStartMinute = 0
+      sessionEndHour = 16 // 4:00 PM
+      sessionEndMinute = 0
+    }
+    
+    const sessionStart = new Date(examDate)
+    sessionStart.setHours(sessionStartHour, sessionStartMinute, 0, 0)
+    
+    const sessionEnd = new Date(examDate)
+    sessionEnd.setHours(sessionEndHour, sessionEndMinute, 0, 0)
+    
+    const diffMs = sessionStart - now
+    
+    // If exam has passed
+    if (now > sessionEnd) return null
+    
+    // If exam is currently happening
+    if (now >= sessionStart && now <= sessionEnd) {
+      const remainingMs = sessionEnd - now
+      const remainingMinutes = Math.floor(remainingMs / (1000 * 60))
+      const remainingHours = Math.floor(remainingMinutes / 60)
+      const mins = remainingMinutes % 60
+      
+      if (remainingHours > 0) {
+        return `${remainingHours}h ${mins}m left`
+      } else {
+        return `${mins}m left`
+      }
+    }
+    
+    // If exam is in the future
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
     const diffDays = Math.floor(diffHours / 24)
     const remainingHours = diffHours % 24
@@ -453,11 +523,18 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
                           <td className="py-3 px-2 lg:px-3">
                             <div className="flex flex-col gap-1">
                               <span className="text-black dark:text-white font-medium text-xs lg:text-sm whitespace-nowrap">{formatDate(entry.date)}</span>
-                              <div className="flex items-center gap-2">
-                                {getStatusBadge(getExamStatus(entry.date))}
-                                {getExamStatus(entry.date) !== 'finished' && getTimeRemaining(entry.date) && (
-                                  <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400">
-                                    {getTimeRemaining(entry.date)}
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                  {getStatusBadge(getExamStatus(entry.date))}
+                                  {getExamStatus(entry.date) !== 'finished' && getTimeRemaining(entry.date, entry.session, entry.category) && (
+                                    <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400">
+                                      {getTimeRemaining(entry.date, entry.session, entry.category)}
+                                    </span>
+                                  )}
+                                </div>
+                                {entry.category === 'Practical' && getSessionTime(entry.session) && (
+                                  <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                                    {getSessionTime(entry.session)}
                                   </span>
                                 )}
                               </div>
@@ -507,13 +584,18 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
                     <div className="bg-white dark:bg-black border border-gray-200 dark:border-zinc-700 rounded-lg p-3 sm:p-4 shadow-sm transition-colors duration-300">
                       <div className="space-y-2">
                         {/* Status Badge and Time Remaining */}
-                        <div className="flex justify-between items-center">
-                          <div>
+                        <div className="flex justify-between items-start">
+                          <div className="flex flex-col gap-1">
                             {getStatusBadge(getExamStatus(entry.date))}
+                            {entry.category === 'Practical' && getSessionTime(entry.session) && (
+                              <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                                {getSessionTime(entry.session)}
+                              </span>
+                            )}
                           </div>
-                          {getExamStatus(entry.date) !== 'finished' && getTimeRemaining(entry.date) && (
+                          {getExamStatus(entry.date) !== 'finished' && getTimeRemaining(entry.date, entry.session, entry.category) && (
                             <div className="text-xs font-semibold text-orange-600 dark:text-orange-400">
-                              {getTimeRemaining(entry.date)}
+                              {getTimeRemaining(entry.date, entry.session, entry.category)}
                             </div>
                           )}
                         </div>
