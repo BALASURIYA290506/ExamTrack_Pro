@@ -533,7 +533,7 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
                                   )}
                                 </div>
                                 {entry.category === 'Practical' && getSessionTime(entry.session) && (
-                                  <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
                                     {getSessionTime(entry.session)}
                                   </span>
                                 )}
@@ -588,7 +588,7 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
                           <div className="flex flex-col gap-1">
                             {getStatusBadge(getExamStatus(entry.date))}
                             {entry.category === 'Practical' && getSessionTime(entry.session) && (
-                              <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                              <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
                                 {getSessionTime(entry.session)}
                               </span>
                             )}
