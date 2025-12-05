@@ -417,13 +417,6 @@ const getTimeRemaining = (dateString, session) => {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
         {/* Header with Logo */}
         <div className="flex items-center justify-between mb-6 sm:mb-8 gap-2">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <img src="/logo.svg" alt="ExamTrack Pro" className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex-shrink-0" />
-            <div className="min-w-0">
-              <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-black dark:text-white truncate">ExamTrack Pro</h1>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Smart Exam Scheduler</p>
-            </div>
-          </div>
           <button
             onClick={onBack}
             className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors flex items-center gap-1 sm:gap-2 font-medium text-sm sm:text-base flex-shrink-0"
@@ -433,6 +426,16 @@ const getTimeRemaining = (dateString, session) => {
             </svg>
             <span className="hidden sm:inline">Back</span>
           </button>
+          
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src="/logo.svg" alt="ExamTrack Pro" className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-black dark:text-white truncate">ExamTrack Pro</h1>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Smart Exam Scheduler</p>
+            </div>
+          </div>
+          
+          <div className="w-10 sm:w-0"></div>
         </div>
 
         {/* Student Info Card */}
