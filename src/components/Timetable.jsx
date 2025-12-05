@@ -396,10 +396,10 @@ const getTimeRemaining = (dateString, session) => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
-      {/* Dark Mode Toggle - Top Right */}
+      {/* Dark Mode Toggle */}
       <button
         onClick={toggleDarkMode}
-        className="fixed top-4 right-4 sm:top-6 sm:right-6 p-2.5 sm:p-3 rounded-full bg-gray-200 dark:bg-zinc-800 
+        className="fixed bottom-4 right-4 sm:top-6 sm:right-6 sm:bottom-auto p-2.5 sm:p-3 rounded-full bg-gray-200 dark:bg-zinc-800 
                    hover:bg-gray-300 dark:hover:bg-zinc-700 transition-all duration-300 shadow-lg z-50"
         aria-label="Toggle dark mode"
       >
