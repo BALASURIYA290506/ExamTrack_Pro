@@ -643,12 +643,12 @@ const getTimeRemaining = (dateString, session) => {
 
         {/* Finished Exams Section */}
         {finishedExams.length > 0 && (
-          <div className="bg-white dark:bg-black rounded-lg sm:rounded-xl shadow-md border-2 border-gray-200 dark:border-zinc-700 p-4 sm:p-6 transition-colors duration-300">
+          <div className="bg-white dark:bg-black rounded-lg sm:rounded-xl shadow-md border-2 border-black dark:border-white p-4 sm:p-6 transition-colors duration-300">
             <div className="flex items-center gap-2 mb-4 sm:mb-6">
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-black dark:text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-600 dark:text-gray-400">Finished Exams</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-black dark:text-white">Finished Exams</h2>
             </div>
 
             {/* Desktop Table */}
