@@ -520,7 +520,7 @@ const getTimeRemaining = (dateString, session) => {
                                 </div>
 
                                 {getSessionTime(entry.session) && (
-                                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                                  <span className="text-xs font-bold text-gray-600 dark:text-gray-300">
                                     {getSessionTime(entry.session)}
                                   </span>
                                 )}
@@ -576,7 +576,7 @@ const getTimeRemaining = (dateString, session) => {
                           <div className="flex flex-col gap-1">
                             {getStatusBadge(getExamStatus(entry.date), entry.date)}
                                 {getSessionTime(entry.session) && (
-                                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                                  <span className="text-xs font-bold text-gray-600 dark:text-gray-300">
                                     {getSessionTime(entry.session)}
                                   </span>
                                 )}
