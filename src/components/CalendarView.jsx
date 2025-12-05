@@ -143,7 +143,7 @@ END:VEVENT
       {/* Dark Mode Toggle */}
       <button
         onClick={toggleDarkMode}
-        className="fixed top-4 right-4 sm:top-6 sm:right-6 p-2.5 sm:p-3 rounded-full bg-gray-200 dark:bg-zinc-800 
+        className="fixed bottom-4 right-4 sm:top-6 sm:right-6 sm:bottom-auto p-2.5 sm:p-3 rounded-full bg-gray-200 dark:bg-zinc-800 
                    hover:bg-gray-300 dark:hover:bg-zinc-700 transition-all duration-300 shadow-lg z-50"
         aria-label="Toggle dark mode"
       >
@@ -171,15 +171,15 @@ END:VEVENT
             <span className="hidden sm:inline">Back</span>
           </button>
           
-          <div className="flex items-center gap-2 sm:gap-3 absolute left-1/2 transform -translate-x-1/2">
+          <div className="flex items-center gap-2 sm:gap-3">
             <img src="/logo.svg" alt="ExamTrack Pro" className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex-shrink-0" />
-            <div className="hidden sm:block">
-              <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-black dark:text-white whitespace-nowrap">Calendar View</h1>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{studentInfo.name} • {studentInfo.registerNumber}</p>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-black dark:text-white truncate">Calendar View</h1>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">{studentInfo.name} • {studentInfo.registerNumber}</p>
             </div>
           </div>
           
-          <div className="sm:hidden flex-1"></div>
+          <div className="w-10 sm:w-0"></div>
         </div>
 
         {/* View Toggle & Export Buttons */}
