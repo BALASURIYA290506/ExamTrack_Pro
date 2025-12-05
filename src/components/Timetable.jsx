@@ -78,7 +78,7 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
     return 'upcoming'
   }
 
-  const getSessionTime = (session) => {
+  /* const getSessionTime = (session) => {
     if (session === 'FN') {
       return '9:00 AM - 12:00 PM'
     }
@@ -86,89 +86,80 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
       return '1:00 PM - 4:00 PM'
     }
     return null
+  } */
+
+const getSessionTime = (session, category) => {
+  // Practical timings
+  if (category === "Practical") {
+    if (session === "FN") return "9:00 AM - 12:00 PM";
+    if (session === "AN") return "1:00 PM - 4:00 PM";
   }
 
-  const getTimeRemaining = (dateString, session, category) => {
-    if (!dateString) return null
-    
-    // Only calculate detailed time for Practical exams
-    if (category !== 'Practical') {
-      const examDate = new Date(dateString)
-      const now = new Date()
-      const diffMs = examDate - now
-      
-      if (diffMs < 0) return null
-      
-      const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-      const diffDays = Math.floor(diffHours / 24)
-      const remainingHours = diffHours % 24
-      
-      if (diffDays > 0) {
-        return `${diffDays}d ${remainingHours}h left`
-      } else if (diffHours > 0) {
-        return `${diffHours}h left`
-      } else {
-        const diffMinutes = Math.floor(diffMs / (1000 * 60))
-        return `${diffMinutes}m left`
-      }
-    }
-    
-    // For Practical exams, calculate time to session start
-    const examDate = new Date(dateString)
-    const now = new Date()
-    
-    // Set the session start time
-    let sessionStartHour = 9
-    let sessionStartMinute = 0
-    let sessionEndHour = 12
-    let sessionEndMinute = 0
-    
-    if (session === 'AN') {
-      sessionStartHour = 13 // 1:00 PM
-      sessionStartMinute = 0
-      sessionEndHour = 16 // 4:00 PM
-      sessionEndMinute = 0
-    }
-    
-    const sessionStart = new Date(examDate)
-    sessionStart.setHours(sessionStartHour, sessionStartMinute, 0, 0)
-    
-    const sessionEnd = new Date(examDate)
-    sessionEnd.setHours(sessionEndHour, sessionEndMinute, 0, 0)
-    
-    const diffMs = sessionStart - now
-    
-    // If exam has passed
-    if (now > sessionEnd) return null
-    
-    // If exam is currently happening
-    if (now >= sessionStart && now <= sessionEnd) {
-      const remainingMs = sessionEnd - now
-      const remainingMinutes = Math.floor(remainingMs / (1000 * 60))
-      const remainingHours = Math.floor(remainingMinutes / 60)
-      const mins = remainingMinutes % 60
-      
-      if (remainingHours > 0) {
-        return `${remainingHours}h ${mins}m left`
-      } else {
-        return `${mins}m left`
-      }
-    }
-    
-    // If exam is in the future
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-    const diffDays = Math.floor(diffHours / 24)
-    const remainingHours = diffHours % 24
-    
-    if (diffDays > 0) {
-      return `${diffDays}d ${remainingHours}h left`
-    } else if (diffHours > 0) {
-      return `${diffHours}h left`
+  // Theory timings
+  if (category === "Theory") {
+    if (session === "FN") return "10:00 AM - 1:00 PM";
+    if (session === "AN") return "2:00 PM - 5:00 PM";
+  }
+
+  return null;
+};
+
+
+const getTimeRemaining = (dateString, session, category) => {
+  if (!dateString) return null;
+
+  const examDate = new Date(dateString);
+  const now = new Date();
+
+  // Assign timing based on category + session
+  let startHour, startMin, endHour, endMin;
+
+  if (category === "Practical") {
+    startHour = session === "FN" ? 9 : 13;
+    endHour   = session === "FN" ? 12 : 16;
+    startMin = endMin = 0;
+  } 
+  else if (category === "Theory") {
+    if (session === "FN") {
+      startHour = 10; startMin = 0;
+      endHour = 13;   endMin = 0;
     } else {
-      const diffMinutes = Math.floor(diffMs / (1000 * 60))
-      return `${diffMinutes}m left`
+      startHour = 14; startMin = 0;
+      endHour = 17;   endMin = 0;
     }
   }
+
+  const sessionStart = new Date(examDate);
+  sessionStart.setHours(startHour, startMin, 0, 0);
+
+  const sessionEnd = new Date(examDate);
+  sessionEnd.setHours(endHour, endMin, 0, 0);
+
+  // Past exam
+  if (now > sessionEnd) return null;
+
+  // Ongoing exam
+  if (now >= sessionStart && now <= sessionEnd) {
+    const diffMs = sessionEnd - now;
+    const mins = Math.floor(diffMs / (1000 * 60));
+    const hrs = Math.floor(mins / 60);
+    const rem = mins % 60;
+    return hrs > 0 ? `${hrs}h ${rem}m left` : `${rem}m left`;
+  }
+
+  // Upcoming exam → time until session start
+  const diffMs = sessionStart - now;
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+  const remHours = diffHours % 24;
+
+  if (diffDays > 0) return `${diffDays}d ${remHours}h left`;
+  if (diffHours > 0) return `${diffHours}h left`;
+
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  return `${diffMinutes}m left`;
+};
+
 
   const getStatusBadge = (status) => {
     if (status === 'today') {
@@ -532,11 +523,13 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
                                     </span>
                                   )}
                                 </div>
-                                {entry.category === 'Practical' && getSessionTime(entry.session) && (
+
+                                {getSessionTime(entry.session, entry.category) && (
                                   <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
-                                    {getSessionTime(entry.session)}
+                                    {getSessionTime(entry.session, entry.category)}
                                   </span>
                                 )}
+
                               </div>
                             </div>
                           </td>
@@ -587,11 +580,12 @@ function Timetable({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) 
                         <div className="flex justify-between items-start">
                           <div className="flex flex-col gap-1">
                             {getStatusBadge(getExamStatus(entry.date))}
-                            {entry.category === 'Practical' && getSessionTime(entry.session) && (
-                              <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
-                                {getSessionTime(entry.session)}
-                              </span>
-                            )}
+                                {getSessionTime(entry.session, entry.category) && (
+                                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                                    {getSessionTime(entry.session, entry.category)}
+                                  </span>
+                                )}
+
                           </div>
                           {getExamStatus(entry.date) !== 'finished' && getTimeRemaining(entry.date, entry.session, entry.category) && (
                             <div className="text-xs font-semibold text-orange-600 dark:text-orange-400">
