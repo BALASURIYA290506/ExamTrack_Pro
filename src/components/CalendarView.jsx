@@ -256,27 +256,16 @@ END:VEVENT
               </button>
             </div>
 
-            {/* Export Buttons */}
-            <div className="flex gap-2">
-              <button
-                onClick={exportToGoogleCalendar}
-                className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 sm:px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 9.75h-2.437V7.313h2.437V9.75zm-3.563 0H11.56V7.313h2.438V9.75zm-3.562 0H8V7.313h2.437V9.75z"/>
-                </svg>
-                <span className="hidden sm:inline">Google</span>
-              </button>
-              <button
-                onClick={exportToICS}
-                className="flex-1 sm:flex-none bg-gray-800 dark:bg-gray-200 hover:bg-gray-900 dark:hover:bg-gray-300 text-white dark:text-black font-medium py-2 px-3 sm:px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span className="hidden sm:inline">Download .ics</span>
-              </button>
-            </div>
+            {/* Export Button */}
+            <button
+              onClick={exportToGoogleCalendar}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 sm:px-6 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 9.75h-2.437V7.313h2.437V9.75zm-3.563 0H11.56V7.313h2.438V9.75zm-3.562 0H8V7.313h2.437V9.75z"/>
+              </svg>
+              <span>Export to Google Calendar</span>
+            </button>
           </div>
         </div>
 
