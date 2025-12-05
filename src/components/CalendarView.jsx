@@ -6,7 +6,9 @@ function CalendarView({ schedule, studentInfo, onBack, darkMode, toggleDarkMode 
 
   // Get all exam dates
   const examDates = schedule.reduce((acc, exam) => {
-    const dateKey = new Date(exam.date).toISOString().split('T')[0]
+    // Parse date and create a local date string to avoid timezone issues
+    const examDate = new Date(exam.date)
+    const dateKey = `${examDate.getFullYear()}-${String(examDate.getMonth() + 1).padStart(2, '0')}-${String(examDate.getDate()).padStart(2, '0')}`
     if (!acc[dateKey]) {
       acc[dateKey] = []
     }
@@ -46,7 +48,8 @@ function CalendarView({ schedule, studentInfo, onBack, darkMode, toggleDarkMode 
   }
 
   const hasExam = (day) => {
-    const dateKey = new Date(year, month, day).toISOString().split('T')[0]
+    // Create date string in local timezone format to match exam dates
+    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     return examDates[dateKey]
   }
 
