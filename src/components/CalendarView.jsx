@@ -416,7 +416,7 @@ END:VEVENT
                                   Postponed
                                 </span>
                               ) : isFinished && (
-                                <span className="inline-block px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded text-[9px] font-semibold">
+                                <span className="inline-block px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded text-[9px] font-bold shadow-sm">
                                   ✓
                                 </span>
                               )}
