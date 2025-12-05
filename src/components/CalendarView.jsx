@@ -110,12 +110,13 @@ END:VEVENT
 
   const exportToGoogleCalendar = () => {
     // Download ICS file and show instructions for Google Calendar import
-    exportToICS()
-    
-    setTimeout(() => {
-      const message = `ICS file downloaded!\n\nTo add all exams to Google Calendar:\n\n1. Open Google Calendar (calendar.google.com)\n2. Click the "+" button next to "Other calendars"\n3. Select "Import"\n4. Choose the downloaded .ics file\n5. Select which calendar to add events to\n6. Click "Import"\n\nAll ${schedule.length} exams will be added to your Google Calendar!`
-      alert(message)
-    }, 500)
+    if (confirm(`📅 Export ${schedule.length} exams to Google Calendar?\n\nThis will download a calendar file (.ics) that you can import into Google Calendar to add all your exams at once.\n\nClick OK to download the file.`)) {
+      exportToICS()
+      
+      setTimeout(() => {
+        alert(`✅ Calendar file downloaded successfully!\n\n📋 Import Steps:\n\n1. Open Google Calendar (calendar.google.com)\n2. Click Settings ⚙️ → Import & Export\n3. Click "Select file from your computer"\n4. Choose the downloaded .ics file\n5. Select destination calendar\n6. Click "Import"\n\n🎉 All ${schedule.length} exams will appear in your calendar!`)
+      }, 500)
+    }
   }
 
   const getCategoryColor = (category) => {
