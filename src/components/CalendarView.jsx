@@ -123,6 +123,12 @@ END:VEVENT
 
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
+      <style>{`
+        @keyframes scan {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100%); }
+        }
+      `}</style>
       {/* Export Success Modal */}
       {showExportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4" onClick={() => setShowExportModal(false)}>
@@ -363,8 +369,31 @@ END:VEVENT
           <div className="bg-white dark:bg-black rounded-xl shadow-md border border-gray-200 dark:border-zinc-700 p-4 sm:p-6 transition-colors duration-300">
             <h2 className="text-lg sm:text-xl font-bold text-black dark:text-white mb-4">Exam Timeline</h2>
             
-            <div className="relative">
-              <div className="space-y-3">
+            <div className="relative pl-8">
+              {/* Continuous Minimal Line with Animated Beam */}
+              <div className="absolute left-3 top-0 bottom-0 w-[3px] bg-gray-200 dark:bg-zinc-800 overflow-hidden rounded-full">
+                {/* Beam 1 */}
+                <div 
+                  className="absolute inset-0 w-full h-full bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,#3b82f6_50%,transparent_60%,transparent_100%)] dark:bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,#60a5fa_50%,transparent_60%,transparent_100%)]"
+                  style={{ animation: 'scan 8s linear infinite' }}
+                ></div>
+                <div 
+                  className="absolute inset-0 w-full h-full bg-[linear-gradient(to_bottom,transparent_0%,transparent_48%,#a5f3fc_50%,transparent_52%,transparent_100%)] opacity-80"
+                  style={{ animation: 'scan 8s linear infinite' }}
+                ></div>
+
+                {/* Beam 2 (Delayed for continuous loop) */}
+                <div 
+                  className="absolute inset-0 w-full h-full bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,#3b82f6_50%,transparent_60%,transparent_100%)] dark:bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,#60a5fa_50%,transparent_60%,transparent_100%)]"
+                  style={{ animation: 'scan 8s linear infinite', animationDelay: '4s' }}
+                ></div>
+                <div 
+                  className="absolute inset-0 w-full h-full bg-[linear-gradient(to_bottom,transparent_0%,transparent_48%,#a5f3fc_50%,transparent_52%,transparent_100%)] opacity-80"
+                  style={{ animation: 'scan 8s linear infinite', animationDelay: '4s' }}
+                ></div>
+              </div>
+
+              <div className="">
                 {schedule.map((exam, index) => {
                   const examDate = new Date(exam.date)
                   const now = new Date()
@@ -380,51 +409,57 @@ END:VEVENT
                                      examDate.getDate() === 3
                   
                   return (
-                    <div key={index} className="relative pl-5">
-                      {/* Vertical line - only show if not the last item */}
-                      {index < schedule.length - 1 && (
-                        <div className="absolute left-[5px] top-0 bottom-0 w-[1px] bg-gray-200 dark:bg-zinc-800"></div>
+                    <div key={index} className="relative pb-6 last:pb-0">
+                      
+                      {/* Masking for First Item (Top) */}
+                      {index === 0 && (
+                        <div className="absolute -left-[26px] top-0 h-6 w-8 bg-white dark:bg-black z-10"></div>
                       )}
                       
+                      {/* Masking for Last Item (Bottom) */}
+                      {index === schedule.length - 1 && (
+                        <div className="absolute -left-[26px] top-6 bottom-0 w-8 bg-white dark:bg-black z-10"></div>
+                      )}
+
                       {/* Timeline dot */}
-                      <div className={`absolute left-0 w-2.5 h-2.5 rounded-full border ${
+                      <div className={`absolute -left-[26px] top-6 -translate-y-1/2 w-4 h-4 rounded-full border-[3px] border-white dark:border-black z-20 transition-all duration-300 ${
                         isFinished 
-                          ? 'bg-gray-400 dark:bg-gray-600 border-gray-400 dark:border-gray-600' 
-                          : 'bg-black dark:bg-white border-black dark:border-white'
+                          ? 'bg-gray-300 dark:bg-zinc-600' 
+                          : 'bg-blue-500 dark:bg-blue-400 ring-2 ring-blue-100 dark:ring-blue-900/30'
                       }`}></div>
 
                       {/* Event card */}
-                      <div className={`${isFinished ? 'opacity-50' : ''}`}>
-                        <div className="bg-white dark:bg-black border border-gray-200 dark:border-zinc-700 rounded-lg p-3 sm:p-4">
+                      <div>
+                        <div className={`bg-white dark:bg-black border border-gray-200 dark:border-zinc-700 rounded-lg p-3 sm:p-4 transition-all duration-300 hover:shadow-md ${isFinished && !isPostponed ? 'opacity-60 grayscale-[0.5]' : ''}`}>
                           <div className="flex items-center justify-between gap-3">
                             {/* Left: Date Icon + Subject Name */}
                             <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 dark:text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
                               <div className="min-w-0">
-                                <h3 className="font-semibold text-black dark:text-white text-sm sm:text-base leading-tight break-words">
+                                <h3 className={`font-semibold text-sm sm:text-base leading-tight break-words ${isFinished ? 'text-gray-700 dark:text-gray-300' : 'text-black dark:text-white'}`}>
                                   {exam.subjectName}
                                 </h3>
-                                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-500 mt-0.5">
                                   {examDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </p>
                               </div>
                             </div>
 
                             {/* Right: Category Badge or Finished Checkmark */}
-                            <div className="flex-shrink-0">
+                            <div className="flex-shrink-0 relative z-10">
                               {isFinished && !isPostponed ? (
-                                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-green-600 dark:bg-green-400 flex items-center justify-center">
-                                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white dark:text-black" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center border border-green-400 dark:border-green-500 shadow-[0_0_20px_rgba(74,222,128,0.9)] dark:shadow-[0_0_20px_rgba(74,222,128,0.6)] ring-1 ring-green-400/50">
+                                  <svg className="w-4 h-4 sm:w-5 sm:h-5 drop-shadow-[0_0_8px_rgba(74,222,128,0.8)]" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                   </svg>
                                 </div>
                               ) : (
-                                <span className={`inline-block px-2.5 py-1 rounded text-xs sm:text-sm font-semibold ${
-                                  exam.category === 'Theory' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                                  exam.category === 'Practical' ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300' :
-                                  'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                                <span className={`inline-block px-2.5 py-1 rounded text-xs sm:text-sm font-medium border ${
+                                  exam.category === 'Theory' ? 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30' :
+                                  exam.category === 'Practical' ? 'bg-cyan-50 text-cyan-700 border-cyan-100 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800/30' :
+                                  'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800/30'
                                 }`}>
                                   {exam.category}
                                 </span>

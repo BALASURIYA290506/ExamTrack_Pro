@@ -10,6 +10,15 @@ export default {
       colors: {
         primary: '#2563eb',
       },
+      keyframes: {
+        'scan': {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(100%)' },
+        }
+      },
+      animation: {
+        'scan': 'scan 3s linear infinite',
+      }
     },
   },
   plugins: [],
