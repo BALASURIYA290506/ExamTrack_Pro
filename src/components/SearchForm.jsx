@@ -36,7 +36,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-8 sm:py-12 px-4 bg-white dark:bg-black transition-colors duration-300">
+    <div className="flex items-center justify-center min-h-dvh py-4 sm:py-8 px-4 bg-white dark:bg-black transition-colors duration-300">
       {/* Dark Mode Toggle - Top Right */}
       <button
         onClick={toggleDarkMode}
@@ -58,8 +58,8 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
       </button>
 
       <div className="w-full max-w-lg">
-        <div className="bg-white dark:bg-black rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700 p-6 sm:p-10 transition-colors duration-300">
-          <div className="text-center mb-6 sm:mb-8">
+        <div className="bg-white dark:bg-black rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700 p-5 sm:p-8 transition-colors duration-300">
+          <div className="text-center mb-4 sm:mb-6">
             <div className="inline-flex items-center justify-center mb-3 sm:mb-4">
               <img src="/logo.svg" alt="ExamTrack Pro Logo" className="w-16 h-16 sm:w-20 sm:h-20" />
             </div>
