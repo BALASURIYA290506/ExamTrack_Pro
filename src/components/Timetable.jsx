@@ -669,7 +669,7 @@ const getTimeRemaining = (dateString, session) => {
                   {finishedExams.map((entry, index) => (
                     <tr key={index} className="border-b border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors">
                       <td className="py-3 px-2 lg:px-3">
-                        <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
                           <span className="text-black dark:text-white font-medium text-xs lg:text-sm whitespace-nowrap">{formatDate(entry.date)}</span>
                           {getStatusBadge('finished', entry.date)}
                         </div>
@@ -692,16 +692,14 @@ const getTimeRemaining = (dateString, session) => {
               {finishedExams.map((entry, index) => (
                 <div key={index} className="bg-white dark:bg-black border border-gray-200 dark:border-zinc-700 rounded-lg p-3 sm:p-4 shadow-sm transition-colors duration-300">
                   <div className="space-y-2">
-                    {/* Status Badge */}
-                    <div className="flex justify-end">
-                      {getStatusBadge('finished', entry.date)}
-                    </div>
-                    
-                    {/* Date Row */}
+                    {/* Date Row with Status Badge */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Date</p>
                         <p className="text-sm font-semibold text-black dark:text-white break-words">{formatDate(entry.date)}</p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        {getStatusBadge('finished', entry.date)}
                       </div>
                     </div>
                     

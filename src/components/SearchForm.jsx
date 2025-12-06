@@ -59,20 +59,20 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
 
       <div className="w-full max-w-lg">
         <div className="bg-white dark:bg-black rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700 p-6 sm:p-10 transition-colors duration-300">
-          <div className="text-center mb-8 sm:mb-10">
-            <div className="inline-flex items-center justify-center mb-4 sm:mb-6">
-              <img src="/logo.svg" alt="ExamTrack Pro Logo" className="w-20 h-20 sm:w-24 sm:h-24" />
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="inline-flex items-center justify-center mb-3 sm:mb-4">
+              <img src="/logo.svg" alt="ExamTrack Pro Logo" className="w-16 h-16 sm:w-20 sm:h-20" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-black dark:text-white mb-2 sm:mb-3">
+            <h1 className="text-2xl sm:text-3xl font-bold text-black dark:text-white mb-2">
               ExamTrack Pro
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base font-medium">Smart Exam Scheduler</p>
-            <p className="text-gray-400 dark:text-gray-500 text-xs sm:text-sm mt-2">Enter your register number to view your schedule</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Smart Exam Scheduler</p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-1.5">Enter your register number to view your schedule</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div>
-              <label htmlFor="registerNumber" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+              <label htmlFor="registerNumber" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Register Number
               </label>
               <input
@@ -80,9 +80,9 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
                 type="text"
                 value={registerNumber}
                 onChange={(e) => setRegisterNumber(e.target.value)}
-                className="w-full px-4 py-3 sm:px-5 sm:py-4 bg-white dark:bg-zinc-900 border-2 border-gray-300 dark:border-zinc-700 rounded-xl 
+                className="w-full px-4 py-2.5 sm:py-3 bg-white dark:bg-zinc-900 border-2 border-gray-300 dark:border-zinc-700 rounded-xl 
                          text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 
-                         focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-all duration-200 text-base"
+                         focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-all duration-200 text-sm sm:text-base"
                 placeholder="e.g., 212222020001"
                 required
                 autoFocus
@@ -107,9 +107,9 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
             <button
               type="submit"
               className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 
-                       text-white dark:text-black font-bold py-3 sm:py-4 px-6 rounded-xl transition-all duration-200 
+                       text-white dark:text-black font-bold py-2.5 sm:py-3 px-6 rounded-xl transition-all duration-200 
                        shadow-lg hover:shadow-xl 
-                       hover:-translate-y-1 active:translate-y-0 text-base"
+                       hover:-translate-y-1 active:translate-y-0 text-sm sm:text-base"
             >
               View Schedule
             </button>
