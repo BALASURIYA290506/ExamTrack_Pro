@@ -78,7 +78,7 @@ function App() {
         category: student['Category'] || student.category || '',
         subjectCode: student['Subject Code'] || student.subjectCode || '',
         subjectName: student['Subject Name'] || student.subjectName || '',
-        roomHall: student['Location'] || student.roomHall || student['Room / Hall'] || ''
+        roomHall: student['Updated Location'] || student['Location'] || student.roomHall || student['Room / Hall'] || ''
       }
     })
 
