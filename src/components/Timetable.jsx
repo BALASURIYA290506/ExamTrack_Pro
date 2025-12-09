@@ -416,10 +416,10 @@ const getTimeRemaining = (dateString, session) => {
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
         {/* Header with Logo */}
-        <div className="flex items-center justify-between mb-6 sm:mb-8 gap-2">
+        <div className="relative flex items-center justify-start sm:justify-center mb-6 sm:mb-8 gap-3 sm:gap-0">
           <button
             onClick={onBack}
-            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors flex items-center gap-1 sm:gap-2 font-medium text-sm sm:text-base flex-shrink-0"
+            className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors flex items-center gap-1 sm:gap-2 font-medium text-sm sm:text-base flex-shrink-0 sm:absolute sm:left-0"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -434,8 +434,6 @@ const getTimeRemaining = (dateString, session) => {
               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Smart Exam Scheduler</p>
             </div>
           </div>
-          
-          <div className="w-10 sm:w-0"></div>
         </div>
 
         {/* Student Info Card */}
