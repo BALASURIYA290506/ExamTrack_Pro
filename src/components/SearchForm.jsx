@@ -61,7 +61,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
         <div className="bg-white dark:bg-black rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700 p-5 sm:p-8 transition-colors duration-300">
           <div className="text-center mb-4 sm:mb-6">
             <div className="inline-flex items-center justify-center mb-3 sm:mb-4">
-              <img src="/logo.svg" alt="ExamTrack Pro Logo" className="w-16 h-16 sm:w-20 sm:h-20" />
+              <img src="/logo.svg" alt="ExamTrack Pro Logo" className="w-24 h-24 sm:w-[108px] sm:h-[108px]" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-black dark:text-white mb-2">
               ExamTrack Pro

@@ -219,7 +219,7 @@ END:VEVENT
           </button>
           
           <div className="flex items-center gap-2 sm:gap-3">
-            <img src="/logo.svg" alt="ExamTrack Pro" className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex-shrink-0" />
+            <img src="/logo.svg" alt="ExamTrack Pro" className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] flex-shrink-0" />
             <div className="min-w-0">
               <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-black dark:text-white truncate">Calendar View</h1>
               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">{studentInfo.name} • {studentInfo.registerNumber}</p>
