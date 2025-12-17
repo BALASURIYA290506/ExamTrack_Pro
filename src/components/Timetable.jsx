@@ -1,6 +1,7 @@
 import React from 'react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import MotivationalCard from './MotivationalCard'
 
 function Timetable({ schedule, studentInfo, onBack, onCalendarView, darkMode, toggleDarkMode }) {
 
@@ -449,6 +450,8 @@ const getTimeRemaining = (dateString, session) => {
             </div>
           </div>
         </div>
+
+        <MotivationalCard upcomingCount={upcomingExams.length} />
 
         {/* Upcoming Exams Section */}
         {upcomingExams.length > 0 && (

@@ -57,8 +57,19 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
         )}
       </button>
 
-      <div className="w-full max-w-lg">
-        <div className="bg-white dark:bg-black rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700 p-5 sm:p-8 transition-colors duration-300">
+      <div className="w-full max-w-lg flex flex-col items-center">
+        {/* New Notification Pill - Outside Card */}
+        <div className="mb-6 animate-fade-in-up">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-100 dark:border-blue-800 shadow-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            New: Motivational Cards Added!
+          </span>
+        </div>
+
+        <div className="w-full bg-white dark:bg-black rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700 p-5 sm:p-8 transition-colors duration-300">
           <div className="text-center mb-4 sm:mb-6">
             <div className="inline-flex items-center justify-center mb-3 sm:mb-4">
               <img src="/logo.svg" alt="ExamTrack Pro Logo" className="w-24 h-24 sm:w-[108px] sm:h-[108px]" />
