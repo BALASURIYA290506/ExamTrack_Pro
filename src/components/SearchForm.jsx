@@ -128,7 +128,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
         </div>
 
         {/* Developer Credits */}
-        <div className="mt-6 bg-white dark:bg-black rounded-xl shadow-md border border-gray-200 dark:border-zinc-700 p-4 transition-colors duration-300">
+        <div className="mt-6 w-full bg-white dark:bg-black rounded-xl shadow-md border border-gray-200 dark:border-zinc-700 p-4 transition-colors duration-300">
           <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-3 font-medium">Developed by</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             {/* Developer 1 */}

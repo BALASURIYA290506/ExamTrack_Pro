@@ -3,23 +3,8 @@ import React, { useState, useEffect } from 'react'
 function MotivationalCard({ upcomingCount }) {
   const [isVisible, setIsVisible] = useState(true)
   const [progress, setProgress] = useState(100)
-  const [quote, setQuote] = useState('')
 
   useEffect(() => {
-    const quotes = [
-      "Yoo exams are cooked. 🍳",
-      "We are so back. 📈",
-      "Absolute cinema. ✋🤚",
-      "Ez clap. 👏",
-      "Mission Passed. Respect + 🕶️",
-      "W in the chat. 💬",
-      "Skill issue? Nah. 🎮",
-      "Speedrun complete. ⏱️",
-      "GG WP. 🤝",
-      "Vibe check passed. ✅"
-    ]
-    setQuote(quotes[Math.floor(Math.random() * quotes.length)])
-
     const duration = 8000
     const interval = 100
     const steps = duration / interval
@@ -124,13 +109,6 @@ function MotivationalCard({ upcomingCount }) {
           <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6">
             {content.message}
           </p>
-
-          {/* Random Quote */}
-          <div className="mb-6 px-4 py-3 bg-white/30 dark:bg-black/30 rounded-lg border border-white/20 dark:border-white/5">
-            <p className="text-xs italic text-gray-500 dark:text-gray-400">
-              "{quote}"
-            </p>
-          </div>
           
           {/* Progress Bar */}
           <div className="w-full bg-gray-100 dark:bg-zinc-800 rounded-full h-1 overflow-hidden">
