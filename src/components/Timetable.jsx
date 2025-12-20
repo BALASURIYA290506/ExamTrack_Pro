@@ -8,6 +8,44 @@ function Timetable({ schedule, studentInfo, onBack, onCalendarView, darkMode, to
   // Separate upcoming and finished exams based on session end time
   const now = new Date()
   
+  // Map of originalDate -> rescheduledDate. Add reschedules here.
+  const rescheduledDates = {
+    '2025-12-03': '2026-01-05'
+  }
+
+  // Apply rescheduled dates before any UI logic so the rest of the component
+  // treats rescheduled exams as normal exams on the new date. We keep the
+  // original date in `originalDate` for reference if needed.
+  const transformedSchedule = (schedule || []).map(entry => {
+    if (!entry || !entry.date) return entry
+    const orig = entry.date
+    if (Object.prototype.hasOwnProperty.call(rescheduledDates, orig)) {
+      return { ...entry, originalDate: orig, date: rescheduledDates[orig], rescheduled: true }
+    }
+    return entry
+  })
+  // Sort by date (ascending). If same date, put FN before AN.
+  .sort((a, b) => {
+    const getTime = (entry) => {
+      if (!entry || !entry.date) return null
+      const d = new Date(entry.date)
+      return isNaN(d.getTime()) ? null : d.getTime()
+    }
+
+    const ta = getTime(a)
+    const tb = getTime(b)
+    if (ta === null && tb === null) return 0
+    if (ta === null) return 1
+    if (tb === null) return -1
+    if (ta !== tb) return ta - tb
+
+    // Same day: order sessions (FN before AN)
+    const order = { 'FN': 0, 'AN': 1 }
+    const sa = order[a.session] ?? 2
+    const sb = order[b.session] ?? 2
+    return sa - sb
+  })
+  
   const isExamFinished = (dateString, session) => {
     if (!dateString) return false
     const examDate = new Date(dateString)
@@ -17,8 +55,8 @@ function Timetable({ schedule, studentInfo, onBack, onCalendarView, darkMode, to
     return now > sessionEnd
   }
   
-  const upcomingExams = schedule.filter(entry => !isExamFinished(entry.date, entry.session))
-  const finishedExams = schedule.filter(entry => isExamFinished(entry.date, entry.session))
+  const upcomingExams = transformedSchedule.filter(entry => !isExamFinished(entry.date, entry.session))
+  const finishedExams = transformedSchedule.filter(entry => isExamFinished(entry.date, entry.session))
 
   const getCategoryBadgeClass = (category) => {
     if (category === 'Theory') {
@@ -134,16 +172,9 @@ const getTimeRemaining = (dateString, session) => {
 
 
   const getStatusBadge = (status, dateString) => {
-    // Check if exam is on December 3, 2025
-    const isPostponed = dateString === '2025-12-03'
-    
-    if (isPostponed) {
-      return (
-        <span className="inline-flex items-center justify-center min-w-[75px] px-2 lg:px-3 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-300 dark:border-yellow-700 rounded-full text-xs font-semibold whitespace-nowrap">
-          POSTPONED
-        </span>
-      )
-    }
+    // Status badges: no hardcoded postponed checks here. Reschedules are
+    // applied earlier via `transformedSchedule` so these exams are treated
+    // like normal upcoming/finished exams.
     if (status === 'today') {
       return (
         <span className="inline-flex items-center justify-center min-w-[75px] px-2 lg:px-3 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700 rounded-full text-xs font-bold animate-pulse whitespace-nowrap">
@@ -235,7 +266,7 @@ const getTimeRemaining = (dateString, session) => {
 
   const downloadPDF = () => {
     try {
-      if (!schedule || schedule.length === 0) {
+      if (!transformedSchedule || transformedSchedule.length === 0) {
         alert('No schedule data available to export.')
         return
       }
@@ -278,8 +309,8 @@ const getTimeRemaining = (dateString, session) => {
       // TABLE SECTION
       // ============================================
       
-      // Prepare table data
-      const tableData = schedule.map(entry => {
+      // Prepare table data (use transformed schedule so rescheduled dates appear in PDF)
+      const tableData = transformedSchedule.map(entry => {
         const dateText = formatDateForPDF(entry.date) || 'N/A'
         return [
           dateText,
@@ -388,7 +419,7 @@ const getTimeRemaining = (dateString, session) => {
       console.error('Error details:', {
         message: error.message,
         stack: error.stack,
-        scheduleLength: schedule?.length,
+        scheduleLength: transformedSchedule?.length,
         studentInfo: studentInfo
       })
       alert(`Failed to generate PDF: ${error.message || 'Unknown error'}. Please check the browser console for details.`)

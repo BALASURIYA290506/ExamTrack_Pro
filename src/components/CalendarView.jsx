@@ -5,8 +5,41 @@ function CalendarView({ schedule, studentInfo, onBack, darkMode, toggleDarkMode 
   const [view, setView] = useState('calendar') // 'calendar' or 'timeline'
   const [showExportModal, setShowExportModal] = useState(false)
 
+  // Map of originalDate -> rescheduledDate. Keep in sync with Timetable.jsx.
+  const rescheduledDates = {
+    '2025-12-03': '2026-01-05'
+  }
+
+  // Apply rescheduled dates before any UI logic so calendar/timeline treat
+  // rescheduled exams as occurring on the new date. Preserve originalDate
+  // when rescheduled and sort chronologically (FN before AN on same day).
+  const transformedSchedule = (schedule || []).map(entry => {
+    if (!entry || !entry.date) return entry
+    const orig = entry.date
+    if (Object.prototype.hasOwnProperty.call(rescheduledDates, orig)) {
+      return { ...entry, originalDate: orig, date: rescheduledDates[orig], rescheduled: true }
+    }
+    return entry
+  }).sort((a, b) => {
+    const getTime = (entry) => {
+      if (!entry || !entry.date) return null
+      const d = new Date(entry.date)
+      return isNaN(d.getTime()) ? null : d.getTime()
+    }
+    const ta = getTime(a)
+    const tb = getTime(b)
+    if (ta === null && tb === null) return 0
+    if (ta === null) return 1
+    if (tb === null) return -1
+    if (ta !== tb) return ta - tb
+    const order = { 'FN': 0, 'AN': 1 }
+    const sa = order[a.session] ?? 2
+    const sb = order[b.session] ?? 2
+    return sa - sb
+  })
+
   // Get all exam dates
-  const examDates = schedule.reduce((acc, exam) => {
+  const examDates = transformedSchedule.reduce((acc, exam) => {
     // Parse date and create a local date string to avoid timezone issues
     const examDate = new Date(exam.date)
     const dateKey = `${examDate.getFullYear()}-${String(examDate.getMonth() + 1).padStart(2, '0')}-${String(examDate.getDate()).padStart(2, '0')}`
@@ -64,7 +97,7 @@ X-WR-CALNAME:${studentInfo.name} - Exam Schedule
 X-WR-TIMEZONE:Asia/Kolkata
 `
 
-    schedule.forEach((exam, index) => {
+    transformedSchedule.forEach((exam, index) => {
       const examDate = new Date(exam.date)
       const startHour = exam.session === 'FN' ? 9 : 13
       const endHour = exam.session === 'FN' ? 12 : 16
@@ -398,7 +431,7 @@ END:VEVENT
               </div>
 
               <div className="">
-                {schedule.map((exam, index) => {
+                {transformedSchedule.map((exam, index) => {
                   const examDate = new Date(exam.date)
                   const now = new Date()
                   const endHour = exam.session === 'FN' ? 12 : 16
@@ -421,7 +454,7 @@ END:VEVENT
                       )}
                       
                       {/* Masking for Last Item (Bottom) */}
-                      {index === schedule.length - 1 && (
+                      {index === transformedSchedule.length - 1 && (
                         <div className="absolute -left-[26px] top-6 bottom-0 w-8 bg-white dark:bg-black z-10"></div>
                       )}
 
