@@ -362,6 +362,48 @@ const getTimeRemaining = (dateString, session) => {
           3: { cellWidth: 60 }, // SUBJECT
           4: { cellWidth: 33 }  // HALL
         },
+        didParseCell: (data) => {
+          // Clear default text for date cells so we can draw custom lines
+          if (data.section === 'body' && data.column.index === 0) {
+            data.cell.text = ['']
+          }
+        },
+        didDrawCell: (data) => {
+          // Draw date and optional rescheduled label with different styles
+          if (data.section === 'body' && data.column.index === 0) {
+            try {
+              const doc = data.doc
+              const cell = data.cell
+              const rowIndex = data.row.index
+              const raw = data.row.raw && data.row.raw[0] ? String(data.row.raw[0]) : ''
+              const exam = transformedSchedule && transformedSchedule[rowIndex]
+
+              // Coordinates
+              const left = cell.x + 3
+              // Slight offset from top of cell
+              const dateY = cell.y + 6
+
+              // Date: larger, default color
+              doc.setFontSize(11)
+              doc.setTextColor(0, 0, 0)
+              doc.text(raw, left, dateY)
+
+              // Rescheduled label: small, light grey, below date
+              if (exam && (exam.rescheduled === true || exam.isRescheduled === true)) {
+                doc.setFontSize(8)
+                doc.setTextColor(150, 150, 150)
+                doc.text('[RESCHEDULED]', left, dateY + 4)
+              }
+
+              // Reset to defaults
+              doc.setFontSize(9)
+              doc.setTextColor(0, 0, 0)
+            } catch (e) {
+              // swallow drawing errors to avoid blocking PDF generation
+              console.error('PDF draw cell error', e)
+            }
+          }
+        },
         theme: 'grid',
         showHead: 'everyPage'
       })
