@@ -169,6 +169,10 @@ const getTimeRemaining = (dateString, session) => {
   return `${mins}m left`;
 };
 
+  const isRescheduledEntry = (entry) => {
+    return Boolean(entry && (entry.rescheduled === true || entry.isRescheduled === true))
+  }
+
 
 
   const getStatusBadge = (status, dateString) => {
@@ -541,6 +545,9 @@ const getTimeRemaining = (dateString, session) => {
                           <td className="py-3 px-2 lg:px-3">
                             <div className="flex flex-col gap-1">
                               <span className="text-black dark:text-white font-medium text-xs lg:text-sm whitespace-nowrap">{formatDate(entry.date)}</span>
+                              {isRescheduledEntry(entry) && (
+                                <span className="text-[10px] font-bold text-yellow-600 dark:text-yellow-400">[RESCHEDULED]</span>
+                              )}
                               <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-2">
                                   {getStatusBadge(getExamStatus(entry.date), entry.date)}
@@ -626,6 +633,9 @@ const getTimeRemaining = (dateString, session) => {
                           <div className="flex-1 min-w-0">
                             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Date</p>
                             <p className="text-sm font-semibold text-black dark:text-white break-words">{formatDate(entry.date)}</p>
+                            {isRescheduledEntry(entry) && (
+                              <p className="text-[10px] font-bold text-yellow-600 dark:text-yellow-400 mt-1">[RESCHEDULED]</p>
+                            )}
                           </div>
                           <div className="text-right">
                             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Session</p>
@@ -701,8 +711,13 @@ const getTimeRemaining = (dateString, session) => {
                   {finishedExams.map((entry, index) => (
                     <tr key={index} className="border-b border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors">
                       <td className="py-3 px-2 lg:px-3">
-                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
+                          <div className="flex flex-col">
                           <span className="text-black dark:text-white font-medium text-xs lg:text-sm whitespace-nowrap">{formatDate(entry.date)}</span>
+                          {isRescheduledEntry(entry) && (
+                            <span className="text-[10px] font-bold text-yellow-600 dark:text-yellow-400">[RESCHEDULED]</span>
+                          )}
+                          </div>
                           {getStatusBadge('finished', entry.date)}
                         </div>
                       </td>
@@ -729,6 +744,9 @@ const getTimeRemaining = (dateString, session) => {
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Date</p>
                         <p className="text-sm font-semibold text-black dark:text-white break-words">{formatDate(entry.date)}</p>
+                        {isRescheduledEntry(entry) && (
+                          <p className="text-[10px] font-bold text-yellow-600 dark:text-yellow-400 mt-1">[RESCHEDULED]</p>
+                        )}
                       </div>
                       <div className="flex-shrink-0">
                         {getStatusBadge('finished', entry.date)}
