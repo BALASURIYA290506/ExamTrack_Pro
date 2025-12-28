@@ -36,7 +36,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-dvh py-4 sm:py-8 px-4 bg-white dark:bg-black transition-colors duration-300">
+    <div className="flex items-start justify-center min-h-dvh pt-8 pb-2 px-2 bg-white dark:bg-black transition-colors duration-300">
       {/* Dark Mode Toggle - Top Right */}
       <button
         onClick={toggleDarkMode}
@@ -65,7 +65,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
-            New: Motivational Cards Added!
+            First year timetable has been updated!
           </span>
         </div>
 
