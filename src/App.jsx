@@ -29,7 +29,7 @@ function App() {
   }
 
   const handleSearch = (registerNumber) => {
-    
+
     // Convert date from DD.MM.YYYY to YYYY-MM-DD
     const convertDate = (dateStr) => {
       if (!dateStr) return null
@@ -49,13 +49,13 @@ function App() {
       if (upper === 'AN' || upper === 'A N') return 'AN'
       return upper
     }
-    
+
     // Filter students matching register number
     const filtered = studentsData.filter(student => {
       const regNumber = student['Register Number'] || student.registerNumber || ''
       const searchRegNumber = registerNumber.trim().toString()
       const studentRegNumber = regNumber.toString().trim()
-      
+
       return studentRegNumber === searchRegNumber
     })
 
@@ -68,7 +68,7 @@ function App() {
     const mapped = filtered.map(student => {
       const slot = student['Slot'] || student.session || ''
       const dateStr = student['Date'] || student.date || ''
-      
+
       return {
         studentName: student['Student Name'] || student.studentName,
         registerNumber: (student['Register Number'] || student.registerNumber).toString(),
@@ -78,7 +78,7 @@ function App() {
         category: student['Category'] || student.category || '',
         subjectCode: student['Subject Code'] || student.subjectCode || '',
         subjectName: student['Subject Name'] || student.subjectName || '',
-        roomHall: student['Updated Location'] || student['Location'] || student.roomHall || student['Room / Hall'] || ''
+        roomHall: student['Updated Location'] || student['Location'] || student['Venue'] || student.roomHall || student['Room / Hall'] || ''
       }
     })
 
@@ -86,11 +86,11 @@ function App() {
     const sorted = mapped.sort((a, b) => {
       const dateA = a.date ? new Date(a.date) : new Date(0)
       const dateB = b.date ? new Date(b.date) : new Date(0)
-      
+
       if (dateA.getTime() !== dateB.getTime()) {
         return dateA - dateB
       }
-      
+
       // Same date: FN comes before AN
       if (a.session === 'FN' && b.session === 'AN') return -1
       if (a.session === 'AN' && b.session === 'FN') return 1
@@ -124,16 +124,16 @@ function App() {
         {!studentSchedule ? (
           <SearchForm onSearch={handleSearch} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         ) : showCalendar ? (
-          <CalendarView 
-            schedule={studentSchedule} 
+          <CalendarView
+            schedule={studentSchedule}
             studentInfo={studentInfo}
             onBack={handleBackToTimetable}
             darkMode={darkMode}
             toggleDarkMode={toggleDarkMode}
           />
         ) : (
-          <Timetable 
-            schedule={studentSchedule} 
+          <Timetable
+            schedule={studentSchedule}
             studentInfo={studentInfo}
             onBack={handleBack}
             onCalendarView={handleCalendarView}
