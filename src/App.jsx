@@ -50,13 +50,17 @@ function App() {
       return upper
     }
 
-    // Filter students matching register number
+    // Filter students matching register number OR reference number
+    const searchValue = registerNumber.trim().toString()
+
     const filtered = studentsData.filter(student => {
       const regNumber = student['Register Number'] || student.registerNumber || ''
-      const searchRegNumber = registerNumber.trim().toString()
+      const refNumber = student['Reference Number'] || ''
       const studentRegNumber = regNumber.toString().trim()
+      const studentRefNumber = refNumber.toString().trim()
 
-      return studentRegNumber === searchRegNumber
+      // Match by either Register Number or Reference Number
+      return studentRegNumber === searchValue || studentRefNumber === searchValue
     })
 
     if (filtered.length === 0) {

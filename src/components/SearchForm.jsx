@@ -78,13 +78,13 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
               ExamTrack Pro
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Smart Exam Scheduler</p>
-            <p className="text-gray-400 dark:text-gray-500 text-xs mt-1.5">Enter your register number to view your schedule</p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-1.5">Enter your reference or register number to view your schedule</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div>
               <label htmlFor="registerNumber" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Register Number
+                Reference / Register Number
               </label>
               <input
                 id="registerNumber"
@@ -94,7 +94,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
                 className="w-full px-4 py-2.5 sm:py-3 bg-white dark:bg-zinc-900 border-2 border-gray-300 dark:border-zinc-700 rounded-xl 
                          text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 
                          focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-all duration-200 text-sm sm:text-base"
-                placeholder="e.g., 21222XXXXXXX"
+                placeholder="e.g., 25XXXXXX or 21222XXXXXXX"
                 required
                 autoFocus
               />
