@@ -58,13 +58,13 @@ function CalendarView({ schedule, studentInfo, onBack, darkMode, toggleDarkMode 
     const lastDay = new Date(year, month + 1, 0)
     const daysInMonth = lastDay.getDate()
     const startDayOfWeek = firstDay.getDay()
-    
+
     return { daysInMonth, startDayOfWeek, year, month }
   }
 
   const { daysInMonth, startDayOfWeek, year, month } = getDaysInMonth(currentMonth)
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                      'July', 'August', 'September', 'October', 'November', 'December']
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December']
 
   const previousMonth = () => {
     setCurrentMonth(new Date(year, month - 1, 1))
@@ -76,9 +76,9 @@ function CalendarView({ schedule, studentInfo, onBack, darkMode, toggleDarkMode 
 
   const isToday = (day) => {
     const today = new Date()
-    return day === today.getDate() && 
-           month === today.getMonth() && 
-           year === today.getFullYear()
+    return day === today.getDate() &&
+      month === today.getMonth() &&
+      year === today.getFullYear()
   }
 
   const hasExam = (day) => {
@@ -101,10 +101,10 @@ X-WR-TIMEZONE:Asia/Kolkata
       const examDate = new Date(exam.date)
       const startHour = exam.session === 'FN' ? 9 : 13
       const endHour = exam.session === 'FN' ? 12 : 16
-      
+
       const startDateTime = new Date(examDate)
       startDateTime.setHours(startHour, 0, 0, 0)
-      
+
       const endDateTime = new Date(examDate)
       endDateTime.setHours(endHour, 0, 0, 0)
 
@@ -157,9 +157,19 @@ END:VEVENT
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
       <style>{`
-        @keyframes scan {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100%); }
+        @keyframes flowDown {
+          0% { transform: translateY(-100%); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(200%); opacity: 0; }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.8; }
+        }
+        @keyframes glowPulse {
+          0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3); }
+          50% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.5); }
         }
       `}</style>
       {/* Export Success Modal */}
@@ -250,7 +260,7 @@ END:VEVENT
             </svg>
             <span className="hidden sm:inline">Back</span>
           </button>
-          
+
           <div className="flex items-center gap-2 sm:gap-3">
             <img src="/logo.svg" alt="ExamTrack Pro" className="w-12 h-12 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] flex-shrink-0" />
             <div className="min-w-0">
@@ -258,7 +268,7 @@ END:VEVENT
               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">{studentInfo.name} • {studentInfo.registerNumber}</p>
             </div>
           </div>
-          
+
           <div className="w-10 sm:w-0"></div>
         </div>
 
@@ -269,11 +279,10 @@ END:VEVENT
             <div className="flex gap-2">
               <button
                 onClick={() => setView('calendar')}
-                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                  view === 'calendar'
-                    ? 'bg-black dark:bg-white text-white dark:text-black'
-                    : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700'
-                }`}
+                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium text-sm transition-all ${view === 'calendar'
+                  ? 'bg-black dark:bg-white text-white dark:text-black'
+                  : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700'
+                  }`}
               >
                 <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -282,11 +291,10 @@ END:VEVENT
               </button>
               <button
                 onClick={() => setView('timeline')}
-                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                  view === 'timeline'
-                    ? 'bg-black dark:bg-white text-white dark:text-black'
-                    : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700'
-                }`}
+                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium text-sm transition-all ${view === 'timeline'
+                  ? 'bg-black dark:bg-white text-white dark:text-black'
+                  : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700'
+                  }`}
               >
                 <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -301,7 +309,7 @@ END:VEVENT
               className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 sm:px-6 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 9.75h-2.437V7.313h2.437V9.75zm-3.563 0H11.56V7.313h2.438V9.75zm-3.562 0H8V7.313h2.437V9.75z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 9.75h-2.437V7.313h2.437V9.75zm-3.563 0H11.56V7.313h2.438V9.75zm-3.562 0H8V7.313h2.437V9.75z" />
               </svg>
               <span>Export to Google Calendar</span>
             </button>
@@ -357,14 +365,12 @@ END:VEVENT
                 return (
                   <div
                     key={day}
-                    className={`aspect-square border border-gray-200 dark:border-zinc-700 rounded-lg p-1 sm:p-2 relative transition-all hover:shadow-md ${
-                      today ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-500' : 
+                    className={`aspect-square border border-gray-200 dark:border-zinc-700 rounded-lg p-1 sm:p-2 relative transition-all hover:shadow-md ${today ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 dark:border-blue-500' :
                       exams ? 'bg-gray-50 dark:bg-zinc-900' : ''
-                    }`}
+                      }`}
                   >
-                    <div className={`text-xs sm:text-sm font-semibold ${
-                      today ? 'text-blue-600 dark:text-blue-400' : 'text-black dark:text-white'
-                    }`}>
+                    <div className={`text-xs sm:text-sm font-semibold ${today ? 'text-blue-600 dark:text-blue-400' : 'text-black dark:text-white'
+                      }`}>
                       {day}
                     </div>
                     {exams && (
@@ -405,28 +411,26 @@ END:VEVENT
         {view === 'timeline' && (
           <div className="bg-white dark:bg-black rounded-xl shadow-md border border-gray-200 dark:border-zinc-700 p-4 sm:p-6 transition-colors duration-300">
             <h2 className="text-lg sm:text-xl font-bold text-black dark:text-white mb-4">Exam Timeline</h2>
-            
+
             <div className="relative pl-8">
-              {/* Continuous Minimal Line with Animated Beam */}
+              {/* Continuous Minimal Line with Single Flowing Glow */}
               <div className="absolute left-3 top-0 bottom-0 w-[3px] bg-gray-200 dark:bg-zinc-800 overflow-hidden rounded-full">
-                {/* Beam 1 */}
-                <div 
-                  className="absolute inset-0 w-full h-full bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,#3b82f6_50%,transparent_60%,transparent_100%)] dark:bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,#60a5fa_50%,transparent_60%,transparent_100%)]"
-                  style={{ animation: 'scan 8s linear infinite' }}
-                ></div>
-                <div 
-                  className="absolute inset-0 w-full h-full bg-[linear-gradient(to_bottom,transparent_0%,transparent_48%,#a5f3fc_50%,transparent_52%,transparent_100%)] opacity-80"
-                  style={{ animation: 'scan 8s linear infinite' }}
+                {/* BIG BRIGHT STROKE - flows top to bottom */}
+                <div
+                  className="absolute w-full h-[200px] bg-gradient-to-b from-transparent via-blue-300 to-transparent blur-[4px]"
+                  style={{ animation: 'flowDown 2s linear infinite' }}
                 ></div>
 
-                {/* Beam 2 (Delayed for continuous loop) */}
-                <div 
-                  className="absolute inset-0 w-full h-full bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,#3b82f6_50%,transparent_60%,transparent_100%)] dark:bg-[linear-gradient(to_bottom,transparent_0%,transparent_40%,#60a5fa_50%,transparent_60%,transparent_100%)]"
-                  style={{ animation: 'scan 8s linear infinite', animationDelay: '4s' }}
+                {/* Intense white center */}
+                <div
+                  className="absolute w-full h-[150px] bg-gradient-to-b from-transparent via-white to-transparent blur-[2px]"
+                  style={{ animation: 'flowDown 2s linear infinite' }}
                 ></div>
-                <div 
-                  className="absolute inset-0 w-full h-full bg-[linear-gradient(to_bottom,transparent_0%,transparent_48%,#a5f3fc_50%,transparent_52%,transparent_100%)] opacity-80"
-                  style={{ animation: 'scan 8s linear infinite', animationDelay: '4s' }}
+
+                {/* Extra bright core */}
+                <div
+                  className="absolute w-full h-[80px] bg-gradient-to-b from-transparent via-white to-transparent"
+                  style={{ animation: 'flowDown 2s linear infinite' }}
                 ></div>
               </div>
 
@@ -438,32 +442,31 @@ END:VEVENT
                   const sessionEnd = new Date(examDate)
                   sessionEnd.setHours(endHour, 0, 0, 0)
                   const isFinished = now > sessionEnd
-                  
+
                   // Check if exam is on December 3, 2025
                   // Use local date components to avoid timezone issues
-                  const isPostponed = examDate.getFullYear() === 2025 && 
-                                     examDate.getMonth() === 11 && 
-                                     examDate.getDate() === 3
-                  
+                  const isPostponed = examDate.getFullYear() === 2025 &&
+                    examDate.getMonth() === 11 &&
+                    examDate.getDate() === 3
+
                   return (
                     <div key={index} className="relative pb-6 last:pb-0">
-                      
+
                       {/* Masking for First Item (Top) */}
                       {index === 0 && (
                         <div className="absolute -left-[26px] top-0 h-6 w-8 bg-white dark:bg-black z-10"></div>
                       )}
-                      
+
                       {/* Masking for Last Item (Bottom) */}
                       {index === transformedSchedule.length - 1 && (
                         <div className="absolute -left-[26px] top-6 bottom-0 w-8 bg-white dark:bg-black z-10"></div>
                       )}
 
                       {/* Timeline dot */}
-                      <div className={`absolute -left-[26px] top-6 -translate-y-1/2 w-4 h-4 rounded-full border-[3px] border-white dark:border-black z-20 transition-all duration-300 ${
-                        isFinished 
-                          ? 'bg-gray-300 dark:bg-zinc-600' 
-                          : 'bg-blue-500 dark:bg-blue-400 ring-2 ring-blue-100 dark:ring-blue-900/30'
-                      }`}></div>
+                      <div className={`absolute -left-[26px] top-6 -translate-y-1/2 w-4 h-4 rounded-full border-[3px] border-white dark:border-black z-20 transition-all duration-300 ${isFinished
+                        ? 'bg-gray-300 dark:bg-zinc-600'
+                        : 'bg-blue-500 dark:bg-blue-400 ring-2 ring-blue-100 dark:ring-blue-900/30'
+                        }`}></div>
 
                       {/* Event card */}
                       <div>
@@ -493,11 +496,10 @@ END:VEVENT
                                   </svg>
                                 </div>
                               ) : (
-                                <span className={`inline-block px-2.5 py-1 rounded text-xs sm:text-sm font-medium border ${
-                                  exam.category === 'Theory' ? 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30' :
+                                <span className={`inline-block px-2.5 py-1 rounded text-xs sm:text-sm font-medium border ${exam.category === 'Theory' ? 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800/30' :
                                   exam.category === 'Practical' ? 'bg-cyan-50 text-cyan-700 border-cyan-100 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800/30' :
-                                  'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800/30'
-                                }`}>
+                                    'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800/30'
+                                  }`}>
                                   {exam.category}
                                 </span>
                               )}
