@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import SearchForm from './components/SearchForm'
 import Timetable from './components/Timetable'
 import CalendarView from './components/CalendarView'
-import studentsData from './data/students.json'
+import studentsData from './data/students_practical.json'
 
 function App() {
   const [studentSchedule, setStudentSchedule] = useState(null)
