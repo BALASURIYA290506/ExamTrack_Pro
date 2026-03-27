@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import SearchForm from './components/SearchForm'
 import Timetable from './components/Timetable'
 import CalendarView from './components/CalendarView'
@@ -146,6 +147,7 @@ function App() {
           />
         )}
       </div>
+      <Analytics />
     </div>
   )
 }
