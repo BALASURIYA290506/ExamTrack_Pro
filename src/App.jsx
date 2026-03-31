@@ -3,7 +3,10 @@ import { Analytics } from '@vercel/analytics/react'
 import SearchForm from './components/SearchForm'
 import Timetable from './components/Timetable'
 import CalendarView from './components/CalendarView'
-import studentsData from './data/students_practical.json'
+import studentsPracticalData from './data/students_practical.json'
+import studentsTheoryData from './data/students_theory.json'
+
+const studentsData = [...studentsPracticalData, ...studentsTheoryData]
 
 function App() {
   const [studentSchedule, setStudentSchedule] = useState(null)
