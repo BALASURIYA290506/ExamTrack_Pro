@@ -5,6 +5,7 @@ import Timetable from './components/Timetable'
 import CalendarView from './components/CalendarView'
 import studentsPracticalData from './data/students_practical.json'
 import studentsTheoryData from './data/students_theory.json'
+import { rescheduledUpdates } from './data/rescheduled'
 
 const studentsData = [...studentsPracticalData, ...studentsTheoryData]
 
@@ -77,11 +78,21 @@ function App() {
       const slot = student['Slot'] || student.session || ''
       const dateStr = student['Date'] || student.date || ''
 
+      const formattedDate = convertDate(dateStr)
+      let isRescheduled = false
+      let finalDate = formattedDate
+
+      if (rescheduledUpdates[formattedDate]) {
+        finalDate = rescheduledUpdates[formattedDate]
+        isRescheduled = true
+      }
+
       return {
         studentName: student['Student Name'] || student.studentName,
         registerNumber: (student['Register Number'] || student.registerNumber).toString(),
-        date: convertDate(dateStr),
-        originalDate: dateStr,
+        date: finalDate,
+        originalDate: formattedDate,
+        isRescheduled: isRescheduled,
         session: normalizeSession(slot),
         category: student['Category'] || student.category || '',
         subjectCode: student['Subject Code'] || student.subjectCode || '',
