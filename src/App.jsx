@@ -6,6 +6,9 @@ import CalendarView from './components/CalendarView'
 import studentsPracticalData from './data/students_practical.json'
 import studentsTheoryData from './data/students_theory.json'
 import { rescheduledUpdates } from './data/rescheduled'
+import Admin from './pages/Admin'
+import { db } from './firebase'
+import { collection, getDocs } from 'firebase/firestore'
 
 const studentsData = [...studentsPracticalData, ...studentsTheoryData]
 
@@ -13,11 +16,30 @@ function App() {
   const [studentSchedule, setStudentSchedule] = useState(null)
   const [studentInfo, setStudentInfo] = useState(null)
   const [showCalendar, setShowCalendar] = useState(false)
+  const [venueOverrides, setVenueOverrides] = useState({})
   const [darkMode, setDarkMode] = useState(() => {
     // Check localStorage for saved preference, default to light mode (false)
     const savedMode = localStorage.getItem('darkMode')
     return savedMode === 'true' ? true : false
   })
+
+  // Fetch Live Venue Overrides from Firebase
+  useEffect(() => {
+    const fetchOverrides = async () => {
+      if (!db) return;
+      try {
+        const querySnapshot = await getDocs(collection(db, "theoryVenueOverrides"));
+        const overrides = {};
+        querySnapshot.forEach((doc) => {
+          overrides[doc.id] = doc.data().hall;
+        });
+        setVenueOverrides(overrides);
+      } catch (err) {
+        console.error("Failed to fetch venue overrides from Firebase", err);
+      }
+    };
+    fetchOverrides();
+  }, [])
 
   // Update document class and localStorage when dark mode changes
   useEffect(() => {
@@ -75,8 +97,13 @@ function App() {
 
     // Map to standardized format and sort
     const mapped = filtered.map(student => {
+      const studentRegNumber = (student['Register Number'] || student.registerNumber).toString()
       const slot = student['Slot'] || student.session || ''
       const dateStr = student['Date'] || student.date || ''
+      
+      const normalizedSession = normalizeSession(slot)
+      const docId = `${studentRegNumber}_${dateStr}_${normalizedSession}`
+      const overridenHall = venueOverrides[docId]
 
       const formattedDate = convertDate(dateStr)
       let isRescheduled = false
@@ -86,18 +113,20 @@ function App() {
         finalDate = rescheduledUpdates[formattedDate]
         isRescheduled = true
       }
+      
+      let finalRoom = overridenHall || student['Updated Location'] || student['Location'] || student['Venue'] || student.roomHall || student['Room / Hall'] || '';
 
       return {
         studentName: student['Student Name'] || student.studentName,
-        registerNumber: (student['Register Number'] || student.registerNumber).toString(),
+        registerNumber: studentRegNumber,
         date: finalDate,
         originalDate: formattedDate,
         isRescheduled: isRescheduled,
-        session: normalizeSession(slot),
+        session: normalizedSession,
         category: student['Category'] || student.category || '',
         subjectCode: student['Subject Code'] || student.subjectCode || '',
         subjectName: student['Subject Name'] || student.subjectName || '',
-        roomHall: student['Updated Location'] || student['Location'] || student['Venue'] || student.roomHall || student['Room / Hall'] || ''
+        roomHall: finalRoom
       }
     })
 
@@ -135,6 +164,10 @@ function App() {
 
   const handleBackToTimetable = () => {
     setShowCalendar(false)
+  }
+
+  if (window.location.pathname === '/admin') {
+    return <Admin />
   }
 
   return (
