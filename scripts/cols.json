@@ -1,0 +1,22 @@
+{
+  "columns": [
+    "Staff",
+    "Date",
+    "Day Order",
+    "Slot",
+    "Subject Code",
+    "Subject Name",
+    "Location",
+    "Count of Students"
+  ],
+  "first_row": {
+    "Staff": "0000 - Raghuram G",
+    "Date": "01.04.2026",
+    "Day Order": 3,
+    "Slot": "FN",
+    "Subject Code": "19EN616",
+    "Subject Name": "Yoga and Meditation",
+    "Location": "5561-YOGA ROOM",
+    "Count of Students": 34
+  }
+}
