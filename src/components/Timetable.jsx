@@ -583,7 +583,9 @@ const getTimeRemaining = (dateString, session) => {
                           </td>
                           <td className="py-3 px-2 lg:px-3 text-gray-600 dark:text-gray-400 text-xs lg:text-sm font-mono whitespace-nowrap">{entry.subjectCode}</td>
                           <td className="py-3 px-2 lg:px-3 text-black dark:text-white font-medium text-xs lg:text-sm break-words min-w-[150px] max-w-[300px]">{entry.subjectName}</td>
-                          <td className="py-3 px-2 lg:px-3 text-gray-600 dark:text-gray-400 text-xs lg:text-sm break-words">{entry.roomHall}</td>
+                          <td className="py-3 px-2 lg:px-3 text-gray-600 dark:text-gray-400 text-xs lg:text-sm break-words">
+                            {entry.roomHall}{entry.seatNo && ` (Seat: ${entry.seatNo})`}
+                          </td>
                         </tr>
                         {daysGap && (
                           <tr className="border-b border-gray-200 dark:border-zinc-800">
@@ -663,16 +665,23 @@ const getTimeRemaining = (dateString, session) => {
                           </div>
                         </div>
                         
-                        {/* Subject Row */}
                         <div className="pt-2 border-t border-gray-100 dark:border-zinc-800">
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Subject</p>
                           <p className="text-sm font-medium text-black dark:text-white break-words leading-relaxed">{entry.subjectName}</p>
                         </div>
                         
                         {/* Location Row */}
-                        <div className="pt-2 border-t border-gray-100 dark:border-zinc-800">
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Location</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 break-words">{entry.roomHall}</p>
+                        <div className="flex items-start justify-between gap-2 pt-2 border-t border-gray-100 dark:border-zinc-800">
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Location</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 break-words">{entry.roomHall}</p>
+                          </div>
+                          {entry.seatNo && (
+                            <div className="text-right">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Seat No</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300 break-words">{entry.seatNo}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

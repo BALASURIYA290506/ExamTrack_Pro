@@ -38,6 +38,7 @@ export const parseVenuePDF = async (file) => {
         }
 
         const parts = fullText.split(/Hall\s*:\s*/i);
+        // venuesMap: hall -> Map of regNo -> seatNo
         const venuesMap = {};
         
         for (let i = 1; i < parts.length; i++) {
@@ -46,13 +47,52 @@ export const parseVenuePDF = async (file) => {
             if (!hallMatch) continue;
             const hall = hallMatch[1].trim();
             
-            const regNoRegex = /\b(\d{11,12})\b/g;
-            let match;
             if (!venuesMap[hall]) {
-                venuesMap[hall] = new Set();
+                venuesMap[hall] = new Map();
             }
-            while ((match = regNoRegex.exec(section)) !== null) {
-                venuesMap[hall].add(match[1]);
+
+            // Try to find seat-number + reg-number pairs.
+            // Common PDF hall plan formats:
+            //   "<SeatNo> <11-12 digit RegNo>" OR "<11-12 digit RegNo> <SeatNo>"
+            // Strategy: find all numbers; a seat number is a short numeric (1–4 digits),
+            // a register number is 11–12 digits. We scan token pairs.
+
+            // Pattern: optional seat (1-4 digits), then reg (11-12 digits) - "1 12345678901"
+            // OR reg then seat - "12345678901 1"
+            const seatRegPattern = /\b(\d{1,4})\s+(\d{11,12})\b/g;
+            const regSeatPattern = /\b(\d{11,12})\s+(\d{1,4})\b/g;
+
+            let matched = false;
+            let match;
+
+            // Try seat-before-reg pattern first
+            const seatRegMatches = [];
+            while ((match = seatRegPattern.exec(section)) !== null) {
+                seatRegMatches.push({ seatNo: match[1], regNo: match[2] });
+                matched = true;
+            }
+
+            const regSeatMatches = [];
+            while ((match = regSeatPattern.exec(section)) !== null) {
+                regSeatMatches.push({ regNo: match[1], seatNo: match[2] });
+                matched = true;
+            }
+
+            // Use whichever pattern found more results
+            const pairs = seatRegMatches.length >= regSeatMatches.length
+                ? seatRegMatches
+                : regSeatMatches;
+
+            if (pairs.length > 0) {
+                pairs.forEach(({ regNo, seatNo }) => {
+                    venuesMap[hall].set(regNo, seatNo);
+                });
+            } else {
+                // Fallback: just extract register numbers without seat numbers
+                const regNoRegex = /\b(\d{11,12})\b/g;
+                while ((match = regNoRegex.exec(section)) !== null) {
+                    venuesMap[hall].set(match[1], null);
+                }
             }
         }
         
@@ -60,7 +100,11 @@ export const parseVenuePDF = async (file) => {
             hall,
             date: globalDate,
             session: globalSession,
-            registerNumbers: [...venuesMap[hall]]
+            // Array of { regNo, seatNo } objects
+            students: Array.from(venuesMap[hall].entries()).map(([regNo, seatNo]) => ({
+                regNo,
+                seatNo
+            }))
         }));
         
         resolve(venues);

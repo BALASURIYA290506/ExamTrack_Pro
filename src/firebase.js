@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -14,15 +13,18 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
 let analytics = null;
-try {
-  if (typeof window !== 'undefined') {
-    analytics = getAnalytics(app);
-  }
-} catch (e) {
-  // Frequently blocked by adblockers like uBlock Origin or Brave Shields
-  console.warn("Firebase Analytics could not be loaded. It might be blocked by an adblocker.");
+if (typeof window !== 'undefined') {
+  // Use dynamic import so that ad blockers won't crash the module evaluation
+  import("firebase/analytics").then(({ getAnalytics }) => {
+    try {
+      analytics = getAnalytics(app);
+    } catch (e) {
+      console.warn("Analytics blocked by adblocker");
+    }
+  }).catch((e) => {
+    console.warn("Firebase Analytics script blocked by client.");
+  });
 }
 
 const db = getFirestore(app);

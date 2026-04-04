@@ -45,7 +45,7 @@ export default function Admin() {
       }
       
       let totalStudents = 0;
-      data.forEach(v => totalStudents += v.registerNumbers.length);
+      data.forEach(v => totalStudents += v.students.length);
       const hallsList = data.map(v => v.hall).join(', ');
       
       setMessage({ type: 'info', text: `Found ${data.length} Halls (${hallsList}) on ${data[0].date} ${data[0].session} with ${totalStudents} students. Uploading to Firebase...` });
@@ -59,10 +59,11 @@ export default function Admin() {
       let successCount = 0;
       for (const venue of data) {
         if (!venue.date || !venue.session || !venue.hall) continue;
-        for (const regNo of venue.registerNumbers) {
-          const docId = `${regNo}_${venue.date}_${venue.session}`;
+        for (const student of venue.students) {
+          const docId = `${student.regNo}_${venue.date}_${venue.session}`;
           await setDoc(doc(db, "theoryVenueOverrides", docId), {
             hall: venue.hall,
+            seatNo: student.seatNo || null,
             updatedAt: new Date().toISOString()
           });
           successCount++;

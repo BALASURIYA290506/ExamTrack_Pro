@@ -31,7 +31,8 @@ function App() {
         const querySnapshot = await getDocs(collection(db, "theoryVenueOverrides"));
         const overrides = {};
         querySnapshot.forEach((doc) => {
-          overrides[doc.id] = doc.data().hall;
+          const data = doc.data();
+          overrides[doc.id] = { hall: data.hall, seatNo: data.seatNo };
         });
         setVenueOverrides(overrides);
       } catch (err) {
@@ -103,7 +104,7 @@ function App() {
       
       const normalizedSession = normalizeSession(slot)
       const docId = `${studentRegNumber}_${dateStr}_${normalizedSession}`
-      const overridenHall = venueOverrides[docId]
+      const overridenVenue = venueOverrides[docId];
 
       const formattedDate = convertDate(dateStr)
       let isRescheduled = false
@@ -114,7 +115,8 @@ function App() {
         isRescheduled = true
       }
       
-      let finalRoom = overridenHall || student['Updated Location'] || student['Location'] || student['Venue'] || student.roomHall || student['Room / Hall'] || '';
+      let finalRoom = overridenVenue?.hall || student['Updated Location'] || student['Location'] || student['Venue'] || student.roomHall || student['Room / Hall'] || '';
+      let finalSeatNo = overridenVenue?.seatNo || null;
 
       return {
         studentName: student['Student Name'] || student.studentName,
@@ -126,7 +128,8 @@ function App() {
         category: student['Category'] || student.category || '',
         subjectCode: student['Subject Code'] || student.subjectCode || '',
         subjectName: student['Subject Name'] || student.subjectName || '',
-        roomHall: finalRoom
+        roomHall: finalRoom,
+        seatNo: finalSeatNo
       }
     })
 
