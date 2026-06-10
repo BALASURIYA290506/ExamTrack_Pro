@@ -34,20 +34,20 @@ export default function Admin() {
     if (!file) return;
     setLoading(true);
     setMessage({ type: 'info', text: "Parsing PDF..." });
-    
+
     try {
       const data = await parseVenuePDF(file);
-      
+
       if (!Array.isArray(data) || data.length === 0) {
         setMessage({ type: 'error', text: "Could not extract Hall, Date, Session, or Register Numbers from this PDF format." });
         setLoading(false);
         return;
       }
-      
+
       let totalStudents = 0;
       data.forEach(v => totalStudents += v.students.length);
       const hallsList = data.map(v => v.hall).join(', ');
-      
+
       setMessage({ type: 'info', text: `Found ${data.length} Halls (${hallsList}) on ${data[0].date} ${data[0].session} with ${totalStudents} students. Uploading to Firebase...` });
 
       if (!db) {
@@ -71,7 +71,7 @@ export default function Admin() {
       }
 
       setMessage({ type: 'success', text: `Success! Updated ${successCount} student venues for Halls: ${hallsList} in the Live Database.` });
-      
+
     } catch (err) {
       console.error(err);
       setMessage({ type: 'error', text: "Error processing file. Check console." });
@@ -82,7 +82,7 @@ export default function Admin() {
 
   const renderMessageIcon = () => {
     if (!message) return null;
-    switch(message.type) {
+    switch (message.type) {
       case 'success': return <CheckCircle className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />;
       case 'error': return <XCircle className="w-5 h-5 text-red-500 mr-2 flex-shrink-0" />;
       case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-500 mr-2 flex-shrink-0" />;
@@ -116,7 +116,7 @@ export default function Admin() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">Admin Access</h1>
           <p className="text-gray-500 text-center mb-8">Enter your secure credentials to continue to the dashboard.</p>
-          
+
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <input
@@ -151,10 +151,10 @@ export default function Admin() {
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Secure Admin Dashboard</h1>
         </div>
         <p className="text-gray-500 mb-8 ml-[60px]">Upload a Final Exam Theory Venue PDF to sync venue data with the live website database.</p>
-        
+
         <label className="border-2 border-dashed border-gray-300 rounded-3xl p-10 flex flex-col items-center justify-center bg-gray-50/50 cursor-pointer hover:bg-indigo-50/50 hover:border-indigo-300 transition group">
-          <input 
-            type="file" 
+          <input
+            type="file"
             accept="application/pdf"
             onChange={handleFileChange}
             className="hidden"
@@ -176,24 +176,23 @@ export default function Admin() {
               <span className="text-xs text-indigo-400 font-bold block uppercase tracking-wider mb-0.5">Selected File</span>
               <span className="text-indigo-900 font-semibold truncate">{file.name}</span>
             </div>
-            <button 
+            <button
               onClick={(e) => { e.preventDefault(); setFile(null); setMessage(null); }}
               className="p-2 hover:bg-indigo-200/50 rounded-xl transition-colors text-indigo-600"
               title="Remove file"
             >
-               <XCircle className="w-5 h-5" />
+              <XCircle className="w-5 h-5" />
             </button>
           </div>
         )}
 
-        <button 
+        <button
           onClick={processPDF}
           disabled={!file || loading}
-          className={`mt-6 w-full py-4 rounded-2xl font-bold text-lg text-white transition-all shadow-lg ${
-            !file || loading 
-              ? 'bg-gray-300 shadow-none cursor-not-allowed text-gray-500' 
-              : 'bg-indigo-600 hover:bg-indigo-700 hover:-translate-y-0.5 hover:shadow-indigo-200/50'
-          } flex justify-center items-center`}
+          className={`mt-6 w-full py-4 rounded-2xl font-bold text-lg text-white transition-all shadow-lg ${!file || loading
+            ? 'bg-gray-300 shadow-none cursor-not-allowed text-gray-500'
+            : 'bg-indigo-600 hover:bg-indigo-700 hover:-translate-y-0.5 hover:shadow-indigo-200/50'
+            } flex justify-center items-center`}
         >
           {loading ? (
             <>
