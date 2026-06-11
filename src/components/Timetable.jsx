@@ -534,7 +534,7 @@ const getTimeRemaining = (dateString, session) => {
                     <th className="text-left py-3 px-2 lg:px-3 text-xs lg:text-sm font-bold text-black dark:text-white whitespace-nowrap">Category</th>
                     <th className="text-left py-3 px-2 lg:px-3 text-xs lg:text-sm font-bold text-black dark:text-white whitespace-nowrap">Code</th>
                     <th className="text-left py-3 px-2 lg:px-3 text-xs lg:text-sm font-bold text-black dark:text-white">Subject</th>
-                    <th className="text-left py-3 px-2 lg:px-3 text-xs lg:text-sm font-bold text-black dark:text-white">Location</th>
+                    <th className="text-left py-3 px-2 lg:px-3 text-xs lg:text-sm font-bold text-black dark:text-white">Venue</th>
                   </tr>
                 </thead>
                 <tbody>
