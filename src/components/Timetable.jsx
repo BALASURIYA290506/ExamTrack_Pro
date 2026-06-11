@@ -673,7 +673,7 @@ const getTimeRemaining = (dateString, session) => {
                         {/* Location Row */}
                         <div className="flex items-start justify-between gap-2 pt-2 border-t border-gray-100 dark:border-zinc-800">
                           <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Location</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Venue</p>
                             <p className="text-sm text-gray-600 dark:text-gray-300 break-words">{entry.roomHall}</p>
                           </div>
                           {entry.seatNo && (
