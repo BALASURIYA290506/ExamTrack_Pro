@@ -1,7 +1,9 @@
-import { useState, memo } from 'react'
+import { useState, useRef, useMemo, memo } from 'react'
 
 function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
-  // Load saved register number directly during initial state initialization (no post-mount re-render)
+  const inputRef = useRef(null)
+
+  // Load saved rememberMe state
   const [rememberMe, setRememberMe] = useState(() => {
     try {
       return localStorage.getItem('rememberMe') === 'true'
@@ -10,19 +12,21 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
     }
   })
 
-  const [registerNumber, setRegisterNumber] = useState(() => {
+  // Load saved register number directly during initial render
+  const initialRegisterNumber = useMemo(() => {
     try {
       const isRemembered = localStorage.getItem('rememberMe') === 'true'
       return isRemembered ? (localStorage.getItem('rememberedRegisterNumber') || '') : ''
     } catch {
       return ''
     }
-  })
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    const regValue = inputRef.current ? inputRef.current.value.trim() : ''
 
-    if (!registerNumber.trim()) {
+    if (!regValue) {
       alert('Please enter your register number.')
       return
     }
@@ -30,7 +34,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
     // Save or remove register number based on remember me checkbox
     try {
       if (rememberMe) {
-        localStorage.setItem('rememberedRegisterNumber', registerNumber)
+        localStorage.setItem('rememberedRegisterNumber', regValue)
         localStorage.setItem('rememberMe', 'true')
       } else {
         localStorage.removeItem('rememberedRegisterNumber')
@@ -40,7 +44,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
       // ignore localStorage errors in private mode
     }
 
-    onSearch(registerNumber)
+    onSearch(regValue)
   }
 
   return (
@@ -86,19 +90,19 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
               ExamTrack Pro
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Smart Exam Scheduler</p>
-            <p className="text-gray-400 dark:text-gray-500 text-xs mt-1.5">Enter your reference or register number to view your schedule</p>
+            <p className="text-gray-400 dark:text-gray-500 text-xs mt-1.5">Enter your register number to view your schedule</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div>
               <label htmlFor="registerNumber" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Reference / Register Number
+                Register Number
               </label>
               <input
                 id="registerNumber"
                 type="text"
-                value={registerNumber}
-                onChange={(e) => setRegisterNumber(e.target.value)}
+                ref={inputRef}
+                defaultValue={initialRegisterNumber}
                 autoComplete="off"
                 autoCorrect="off"
                 autoCapitalize="off"
