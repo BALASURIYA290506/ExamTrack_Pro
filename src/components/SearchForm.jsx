@@ -1,19 +1,23 @@
-import { useState, useEffect } from 'react'
+import { useState, memo } from 'react'
 
 function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
-  const [registerNumber, setRegisterNumber] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
-
-  // Load saved register number on component mount
-  useEffect(() => {
-    const savedRegisterNumber = localStorage.getItem('rememberedRegisterNumber')
-    const savedRememberMe = localStorage.getItem('rememberMe') === 'true'
-
-    if (savedRememberMe && savedRegisterNumber) {
-      setRegisterNumber(savedRegisterNumber)
-      setRememberMe(true)
+  // Load saved register number directly during initial state initialization (no post-mount re-render)
+  const [rememberMe, setRememberMe] = useState(() => {
+    try {
+      return localStorage.getItem('rememberMe') === 'true'
+    } catch {
+      return false
     }
-  }, [])
+  })
+
+  const [registerNumber, setRegisterNumber] = useState(() => {
+    try {
+      const isRemembered = localStorage.getItem('rememberMe') === 'true'
+      return isRemembered ? (localStorage.getItem('rememberedRegisterNumber') || '') : ''
+    } catch {
+      return ''
+    }
+  })
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -24,19 +28,23 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
     }
 
     // Save or remove register number based on remember me checkbox
-    if (rememberMe) {
-      localStorage.setItem('rememberedRegisterNumber', registerNumber)
-      localStorage.setItem('rememberMe', 'true')
-    } else {
-      localStorage.removeItem('rememberedRegisterNumber')
-      localStorage.removeItem('rememberMe')
+    try {
+      if (rememberMe) {
+        localStorage.setItem('rememberedRegisterNumber', registerNumber)
+        localStorage.setItem('rememberMe', 'true')
+      } else {
+        localStorage.removeItem('rememberedRegisterNumber')
+        localStorage.removeItem('rememberMe')
+      }
+    } catch {
+      // ignore localStorage errors in private mode
     }
 
     onSearch(registerNumber)
   }
 
   return (
-    <div className="flex items-start justify-center min-h-dvh pt-8 pb-2 px-2 bg-white dark:bg-black transition-colors duration-300">
+    <div className="flex items-start justify-center min-h-screen pt-8 pb-2 px-2 bg-white dark:bg-black transition-colors duration-300">
       {/* Dark Mode Toggle - Top Right */}
       <button
         onClick={toggleDarkMode}
@@ -65,7 +73,7 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
-            Term 2 Even sem timetable has been updated!
+            Term 1 Odd sem timetable has been updated!
           </span>
         </div>
 
@@ -91,9 +99,14 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
                 type="text"
                 value={registerNumber}
                 onChange={(e) => setRegisterNumber(e.target.value)}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+                inputMode="text"
                 className="w-full px-4 py-2.5 sm:py-3 bg-white dark:bg-zinc-900 border-2 border-gray-300 dark:border-zinc-700 rounded-xl 
                          text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 
-                         focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-all duration-200 text-sm sm:text-base"
+                         focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-200 text-sm sm:text-base"
                 placeholder="e.g., 25XXXXXX or 21222XXXXXXX"
                 required
                 autoFocus
@@ -185,5 +198,5 @@ function SearchForm({ onSearch, darkMode, toggleDarkMode }) {
   )
 }
 
-export default SearchForm
+export default memo(SearchForm)
 

@@ -1,16 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import SearchForm from './components/SearchForm'
 import Timetable from './components/Timetable'
 import CalendarView from './components/CalendarView'
-import studentsPracticalData from './data/students_practical.json'
-import studentsTheoryData from './data/students_theory.json'
+import { getStudentsSearchIndex } from './utils/studentDataService'
 import { rescheduledUpdates } from './data/rescheduled'
 import Admin from './pages/Admin'
 import { db } from './firebase'
 import { collection, getDocs } from 'firebase/firestore'
 
-const studentsData = [...studentsPracticalData, ...studentsTheoryData]
+// Helper for date conversion: DD.MM.YYYY to YYYY-MM-DD
+const convertDate = (dateStr) => {
+  if (!dateStr) return null
+  const parts = String(dateStr).trim().split('.')
+  if (parts.length === 3) {
+    const day = parts[0].padStart(2, '0')
+    const month = parts[1].padStart(2, '0')
+    const year = parts[2]
+    return `${year}-${month}-${day}`
+  }
+  return dateStr
+}
+
+// Helper for session normalization: "F.N." -> "FN", "A.N." -> "AN"
+const normalizeSession = (slot) => {
+  if (!slot) return ''
+  const upper = String(slot).toUpperCase().replace(/\./g, '').trim()
+  if (upper === 'FN' || upper === 'F N' || upper === 'FORENOON') return 'FN'
+  if (upper === 'AN' || upper === 'A N' || upper === 'AFTERNOON') return 'AN'
+  return upper
+}
 
 function App() {
   const [studentSchedule, setStudentSchedule] = useState(null)
@@ -52,44 +71,16 @@ function App() {
     localStorage.setItem('darkMode', darkMode)
   }, [darkMode])
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-  }
+  const toggleDarkMode = useCallback(() => {
+    setDarkMode((prev) => !prev)
+  }, [])
 
-  const handleSearch = (registerNumber) => {
-
-    // Convert date from DD.MM.YYYY to YYYY-MM-DD
-    const convertDate = (dateStr) => {
-      if (!dateStr) return null
-      // Handle DD.MM.YYYY format
-      const parts = dateStr.split('.')
-      if (parts.length === 3) {
-        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`
-      }
-      return dateStr
-    }
-
-    // Normalize session: "F.N." -> "FN", "A.N." -> "AN"
-    const normalizeSession = (slot) => {
-      if (!slot) return ''
-      const upper = slot.toUpperCase().replace(/\./g, '').trim()
-      if (upper === 'FN' || upper === 'F N') return 'FN'
-      if (upper === 'AN' || upper === 'A N') return 'AN'
-      return upper
-    }
-
-    // Filter students matching register number OR reference number
-    const searchValue = registerNumber.trim().toString()
-
-    const filtered = studentsData.filter(student => {
-      const regNumber = student['Register Number'] || student.registerNumber || ''
-      const refNumber = student['Reference Number'] || ''
-      const studentRegNumber = regNumber.toString().trim()
-      const studentRefNumber = refNumber.toString().trim()
-
-      // Match by either Register Number or Reference Number
-      return studentRegNumber === searchValue || studentRefNumber === searchValue
-    })
+  const handleSearch = useCallback(async (registerNumber) => {
+    const searchValue = String(registerNumber || '').trim().toLowerCase()
+    
+    // Retrieve pre-built O(1) search index
+    const searchIndex = await getStudentsSearchIndex()
+    const filtered = searchIndex.get(searchValue) || []
 
     if (filtered.length === 0) {
       alert('Student not found! Please check your register number.')
@@ -98,13 +89,13 @@ function App() {
 
     // Map to standardized format and sort
     const mapped = filtered.map(student => {
-      const studentRegNumber = (student['Register Number'] || student.registerNumber).toString()
+      const studentRegNumber = String(student['Register Number'] || student.registerNumber || '').trim()
       const slot = student['Slot'] || student.session || ''
       const dateStr = student['Date'] || student.date || ''
       
-      const normalizedSession = normalizeSession(slot)
-      const docId = `${studentRegNumber}_${dateStr}_${normalizedSession}`
-      const overridenVenue = venueOverrides[docId];
+      const sessionNormalized = normalizeSession(slot)
+      const docId = `${studentRegNumber}_${dateStr}_${sessionNormalized}`
+      const overridenVenue = venueOverrides[docId]
 
       const formattedDate = convertDate(dateStr)
       let isRescheduled = false
@@ -115,16 +106,16 @@ function App() {
         isRescheduled = true
       }
       
-      let finalRoom = overridenVenue?.hall || student['Updated Location'] || student['Location'] || student['Venue'] || student.roomHall || student['Room / Hall'] || '';
-      let finalSeatNo = overridenVenue?.seatNo || null;
+      let finalRoom = overridenVenue?.hall || student['Room / Hall'] || student['Updated Location'] || student['Location'] || student['Venue'] || student.roomHall || ''
+      let finalSeatNo = overridenVenue?.seatNo || null
 
       return {
-        studentName: student['Student Name'] || student.studentName,
+        studentName: student['Student Name'] || student.studentName || '',
         registerNumber: studentRegNumber,
         date: finalDate,
         originalDate: formattedDate,
         isRescheduled: isRescheduled,
-        session: normalizedSession,
+        session: sessionNormalized,
         category: student['Category'] || student.category || '',
         subjectCode: student['Subject Code'] || student.subjectCode || '',
         subjectName: student['Subject Name'] || student.subjectName || '',
@@ -135,10 +126,10 @@ function App() {
 
     // Sort by date, then by session (FN before AN)
     const sorted = mapped.sort((a, b) => {
-      const dateA = a.date ? new Date(a.date) : new Date(0)
-      const dateB = b.date ? new Date(b.date) : new Date(0)
+      const dateA = a.date ? new Date(a.date).getTime() : 0
+      const dateB = b.date ? new Date(b.date).getTime() : 0
 
-      if (dateA.getTime() !== dateB.getTime()) {
+      if (dateA !== dateB) {
         return dateA - dateB
       }
 
@@ -153,21 +144,21 @@ function App() {
       name: sorted[0].studentName,
       registerNumber: sorted[0].registerNumber
     })
-  }
+  }, [venueOverrides])
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setStudentSchedule(null)
     setStudentInfo(null)
     setShowCalendar(false)
-  }
+  }, [])
 
-  const handleCalendarView = () => {
+  const handleCalendarView = useCallback(() => {
     setShowCalendar(true)
-  }
+  }, [])
 
-  const handleBackToTimetable = () => {
+  const handleBackToTimetable = useCallback(() => {
     setShowCalendar(false)
-  }
+  }, [])
 
   if (window.location.pathname === '/admin') {
     return <Admin />

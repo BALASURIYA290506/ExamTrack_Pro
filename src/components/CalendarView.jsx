@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 
 function CalendarView({ schedule, studentInfo, onBack, darkMode, toggleDarkMode }) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -6,63 +6,65 @@ function CalendarView({ schedule, studentInfo, onBack, darkMode, toggleDarkMode 
   const [showExportModal, setShowExportModal] = useState(false)
 
   // Map of originalDate -> rescheduledDate. Keep in sync with Timetable.jsx.
-  const rescheduledDates = {
+  const rescheduledDates = useMemo(() => ({
     '2025-12-03': '2026-01-05'
-  }
+  }), [])
 
   // Apply rescheduled dates before any UI logic so calendar/timeline treat
   // rescheduled exams as occurring on the new date. Preserve originalDate
   // when rescheduled and sort chronologically (FN before AN on same day).
-  const transformedSchedule = (schedule || []).map(entry => {
-    if (!entry || !entry.date) return entry
-    const orig = entry.date
-    if (Object.prototype.hasOwnProperty.call(rescheduledDates, orig)) {
-      return { ...entry, originalDate: orig, date: rescheduledDates[orig], rescheduled: true }
-    }
-    return entry
-  }).sort((a, b) => {
-    const getTime = (entry) => {
-      if (!entry || !entry.date) return null
-      const d = new Date(entry.date)
-      return isNaN(d.getTime()) ? null : d.getTime()
-    }
-    const ta = getTime(a)
-    const tb = getTime(b)
-    if (ta === null && tb === null) return 0
-    if (ta === null) return 1
-    if (tb === null) return -1
-    if (ta !== tb) return ta - tb
-    const order = { 'FN': 0, 'AN': 1 }
-    const sa = order[a.session] ?? 2
-    const sb = order[b.session] ?? 2
-    return sa - sb
-  })
+  const transformedSchedule = useMemo(() => {
+    return (schedule || []).map(entry => {
+      if (!entry || !entry.date) return entry
+      const orig = entry.date
+      if (Object.prototype.hasOwnProperty.call(rescheduledDates, orig)) {
+        return { ...entry, originalDate: orig, date: rescheduledDates[orig], rescheduled: true }
+      }
+      return entry
+    }).sort((a, b) => {
+      const getTime = (entry) => {
+        if (!entry || !entry.date) return null
+        const d = new Date(entry.date)
+        return isNaN(d.getTime()) ? null : d.getTime()
+      }
+      const ta = getTime(a)
+      const tb = getTime(b)
+      if (ta === null && tb === null) return 0
+      if (ta === null) return 1
+      if (tb === null) return -1
+      if (ta !== tb) return ta - tb
+      const order = { 'FN': 0, 'AN': 1 }
+      const sa = order[a.session] ?? 2
+      const sb = order[b.session] ?? 2
+      return sa - sb
+    })
+  }, [schedule, rescheduledDates])
 
   // Get all exam dates
-  const examDates = transformedSchedule.reduce((acc, exam) => {
-    // Parse date and create a local date string to avoid timezone issues
-    const examDate = new Date(exam.date)
-    const dateKey = `${examDate.getFullYear()}-${String(examDate.getMonth() + 1).padStart(2, '0')}-${String(examDate.getDate()).padStart(2, '0')}`
-    if (!acc[dateKey]) {
-      acc[dateKey] = []
-    }
-    acc[dateKey].push(exam)
-    return acc
-  }, {})
+  const examDates = useMemo(() => {
+    return transformedSchedule.reduce((acc, exam) => {
+      // Parse date and create a local date string to avoid timezone issues
+      const examDate = new Date(exam.date)
+      const dateKey = `${examDate.getFullYear()}-${String(examDate.getMonth() + 1).padStart(2, '0')}-${String(examDate.getDate()).padStart(2, '0')}`
+      if (!acc[dateKey]) {
+        acc[dateKey] = []
+      }
+      acc[dateKey].push(exam)
+      return acc
+    }, {})
+  }, [transformedSchedule])
 
   // Calendar generation
-  const getDaysInMonth = (date) => {
-    const year = date.getFullYear()
-    const month = date.getMonth()
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
-    const daysInMonth = lastDay.getDate()
-    const startDayOfWeek = firstDay.getDay()
+  const { daysInMonth, startDayOfWeek, year, month } = useMemo(() => {
+    const y = currentMonth.getFullYear()
+    const m = currentMonth.getMonth()
+    const firstDay = new Date(y, m, 1)
+    const lastDay = new Date(y, m + 1, 0)
+    const dInMonth = lastDay.getDate()
+    const sDayOfWeek = firstDay.getDay()
 
-    return { daysInMonth, startDayOfWeek, year, month }
-  }
-
-  const { daysInMonth, startDayOfWeek, year, month } = getDaysInMonth(currentMonth)
+    return { daysInMonth: dInMonth, startDayOfWeek: sDayOfWeek, year: y, month: m }
+  }, [currentMonth])
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December']
 
