@@ -1,6 +1,4 @@
 import React from 'react'
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
 import MotivationalCard from './MotivationalCard'
 
 function Timetable({ schedule, studentInfo, onBack, onCalendarView, darkMode, toggleDarkMode }) {
@@ -230,7 +228,7 @@ const getTimeRemaining = (dateString, session) => {
     }
   }
 
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     try {
       if (!schedule || schedule.length === 0) {
         alert('No schedule data available to export.')
@@ -241,6 +239,11 @@ const getTimeRemaining = (dateString, session) => {
         alert('Student information is missing.')
         return
       }
+
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable')
+      ])
 
       const pdf = new jsPDF('p', 'mm', 'a4')
       const pageWidth = pdf.internal.pageSize.getWidth()

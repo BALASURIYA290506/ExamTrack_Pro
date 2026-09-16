@@ -1,13 +1,15 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import SearchForm from './components/SearchForm'
-import Timetable from './components/Timetable'
-import CalendarView from './components/CalendarView'
 import { getStudentsSearchIndex } from './utils/studentDataService'
 import { rescheduledUpdates } from './data/rescheduled'
-import Admin from './pages/Admin'
 import { db } from './firebase'
 import { collection, getDocs } from 'firebase/firestore'
+
+// Lazy-load non-critical routes/components to keep the landing page bundle tiny (<50 KB)
+const Timetable = lazy(() => import('./components/Timetable'))
+const CalendarView = lazy(() => import('./components/CalendarView'))
+const Admin = lazy(() => import('./pages/Admin'))
 
 // Helper for date conversion: DD.MM.YYYY to YYYY-MM-DD
 const convertDate = (dateStr) => {
@@ -42,12 +44,14 @@ function App() {
     return savedMode === 'true' ? true : false
   })
 
-  // Fetch Live Venue Overrides from Firebase
+  // Fetch Live Venue Overrides from Firebase during idle time (does not block initial render)
   useEffect(() => {
+    let isMounted = true
     const fetchOverrides = async () => {
       if (!db) return;
       try {
         const querySnapshot = await getDocs(collection(db, "theoryVenueOverrides"));
+        if (!isMounted) return;
         const overrides = {};
         querySnapshot.forEach((doc) => {
           const data = doc.data();
@@ -58,7 +62,14 @@ function App() {
         console.error("Failed to fetch venue overrides from Firebase", err);
       }
     };
-    fetchOverrides();
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => fetchOverrides(), { timeout: 4000 })
+    } else {
+      setTimeout(fetchOverrides, 300)
+    }
+
+    return () => { isMounted = false }
   }, [])
 
   // Update document class and localStorage when dark mode changes
@@ -161,32 +172,38 @@ function App() {
   }, [])
 
   if (window.location.pathname === '/admin') {
-    return <Admin />
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-white dark:bg-black" />}>
+        <Admin />
+      </Suspense>
+    )
   }
 
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
       <div className="container mx-auto px-4 py-8">
-        {!studentSchedule ? (
-          <SearchForm onSearch={handleSearch} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        ) : showCalendar ? (
-          <CalendarView
-            schedule={studentSchedule}
-            studentInfo={studentInfo}
-            onBack={handleBackToTimetable}
-            darkMode={darkMode}
-            toggleDarkMode={toggleDarkMode}
-          />
-        ) : (
-          <Timetable
-            schedule={studentSchedule}
-            studentInfo={studentInfo}
-            onBack={handleBack}
-            onCalendarView={handleCalendarView}
-            darkMode={darkMode}
-            toggleDarkMode={toggleDarkMode}
-          />
-        )}
+        <Suspense fallback={<div className="min-h-screen bg-white dark:bg-black" />}>
+          {!studentSchedule ? (
+            <SearchForm onSearch={handleSearch} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+          ) : showCalendar ? (
+            <CalendarView
+              schedule={studentSchedule}
+              studentInfo={studentInfo}
+              onBack={handleBackToTimetable}
+              darkMode={darkMode}
+              toggleDarkMode={toggleDarkMode}
+            />
+          ) : (
+            <Timetable
+              schedule={studentSchedule}
+              studentInfo={studentInfo}
+              onBack={handleBack}
+              onCalendarView={handleCalendarView}
+              darkMode={darkMode}
+              toggleDarkMode={toggleDarkMode}
+            />
+          )}
+        </Suspense>
       </div>
       <Analytics />
     </div>

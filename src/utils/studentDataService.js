@@ -3,7 +3,7 @@ let datasetPromise = null
 let cachedSearchIndex = null
 
 /**
- * Asynchronously loads and indexes the 22k+ student dataset in the background.
+ * Asynchronously loads and indexes the 22k+ student dataset.
  * Using dynamic import keeps the primary JS bundle tiny and prevents main-thread
  * blocking / GC pauses during initial render and user typing.
  */
@@ -54,15 +54,28 @@ export const getStudentsSearchIndex = async () => {
   return datasetPromise
 }
 
-// Prefetch dataset during browser idle time so it is ready immediately when searched
+// Prefetch dataset during idle time after landing page has fully rendered
+export const prefetchStudentsDataset = () => {
+  if (typeof window !== 'undefined') {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => {
+        getStudentsSearchIndex()
+      }, { timeout: 3000 })
+    } else {
+      setTimeout(() => {
+        getStudentsSearchIndex()
+      }, 1000)
+    }
+  }
+}
+
+// Start prefetch after initial paint
 if (typeof window !== 'undefined') {
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(() => {
-      getStudentsSearchIndex()
-    })
+  if (document.readyState === 'complete') {
+    prefetchStudentsDataset()
   } else {
-    setTimeout(() => {
-      getStudentsSearchIndex()
-    }, 100)
+    window.addEventListener('load', () => {
+      prefetchStudentsDataset()
+    }, { once: true })
   }
 }
